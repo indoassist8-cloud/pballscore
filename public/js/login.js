@@ -252,6 +252,6 @@ signupForm.addEventListener('submit', (e) => {
 });
 
 // Make functions globally accessible for simple HTML onclicks
-window.loginWithGoogle = loginWithGoogle;
+//window.loginWithGoogle = loginWithGoogle;
 window.sendOTP = sendOTP;
 window.verifyOTP = verifyOTP;
