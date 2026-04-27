@@ -102,6 +102,30 @@
             background: linear-gradient(135deg, #131b2e 0%, #1e293b 100%);
         }
 
+        /* Transition Styles */
+        #auth-content-wrapper {
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        }
+
+        .registration-active #login-view {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-20px);
+        }
+
+        .registration-active #registration-view {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0);
+        }
+
+        #registration-view {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(20px);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        }
+
         [data-tab-content] {
             display: none;
         }
