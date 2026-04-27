@@ -1,0 +1,19 @@
+.error-box {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 12px;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-align: center;
+    transition: opacity 0.5s ease;
+    opacity: 1;
+}
+
+/* Add this class for the fade effect */
+.error-hidden {
+    opacity: 0;
+    pointer-events: none;
+    /* Prevents clicking on it while invisible */
+}

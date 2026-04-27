@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>PicklePro Dashboard</title>
+    <title>PBALL Dashboard</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100;300;400;500;600;700;800;900&amp;display=swap"
         rel="stylesheet" />
@@ -110,12 +110,6 @@
 </head>
 
 <body class="bg-background text-on-surface min-h-screen flex flex-col md:flex-row">
-    <!-- Start of Header + nav bar 
-    ============================================= 
-    =============================================
-    =============================================
-    =============================================
-    -->
     <!-- SideNavBar (Desktop Only) -->
     <aside
         class="hidden md:flex h-screen w-20 flex-col sticky left-0 top-0 bg-slate-900 dark:bg-slate-950 border-r border-slate-800 shadow-xl flex flex-col items-center py-6 gap-8 z-50">
@@ -130,7 +124,7 @@
                 <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
             </a>
             <a class="text-slate-400 hover:text-white p-3 transform transition-transform hover:scale-110 active:opacity-80"
-                href="#" title="Community">
+                href="comm.html" title="Community">
                 <span class="material-symbols-outlined" data-icon="groups">groups</span>
             </a>
         </nav>
@@ -146,7 +140,7 @@
             class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm docked full-width top-0 sticky z-40 flex justify-between items-center w-full px-4 h-16">
             <div class="flex items-center gap-4 flex-1">
                 <div class="md:hidden">
-                    <img alt="PICKLEPRO Logo" class="h-8 w-8"
+                    <img alt="PBALL Logo" class="h-8 w-8"
                         data-alt="Small pickleball logo for mobile header with vibrant orange highlights"
                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8mJDoaYm0G9ytQQ68R7PTTY7BBSFdO79_0X2kMFkOWpqL9q70cub6_eFyMZZN5TBE-RxhRUKmZsNdCQeBqfKb5-WxTVroQbhXqTePFTXvVX2_XEhWdJXhZweTykMhpwfLA9ndC7ZRARk5uoFilQcYfw1M4sjBRvtdm1Jyw0TiS8gassf6850SYXN6nNObSGggkVyIttpWm9MQQhiQYUPumm7tHfFa0kxLVEzBkWQDCQK7TvbEx2VVyafxY5VtvhwCqBHGYVwdV9Y" />
                 </div>
@@ -159,7 +153,7 @@
                 </div>
                 <h1
                     class="text-xl font-black italic text-slate-900 dark:text-white tracking-tighter ml-2 font-lexend font-bold tracking-tight">
-                    PICKLEPRO</h1>
+                    PBALL</h1>
             </div>
             <div class="flex items-center gap-3">
                 <button
@@ -170,49 +164,14 @@
                     class="p-2 text-slate-600 dark:text-slate-400 hover:text-orange-500 transition-colors duration-200">
                     <span class="material-symbols-outlined" data-icon="settings">settings</span>
                 </button>
-                <div class="relative group">
-                    <button
-                        class="w-8 h-8 rounded-full overflow-hidden border-2 border-orange-500 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-orange-500/50">
-                        <img alt="User profile" class="w-full h-full object-cover"
-                            data-alt="Professional headshot of a smiling young male athlete with short hair and athletic attire"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpFwfKr0vg251lMWJn1BNaDYJj6MuwAdJImpY9r2D02AwCP_3rbH2Ru8c8r4Eomq6nuncoMyYmUCoVvMgQxU-is8kIsJeyKdpQDBaL0cP-oTLZCBehFcQd1P8GhxqRymRkf7yF2Kyi8o-IhFa9-2VK2B4jKTxANt7rstCjAeN9xWEyjtxvO6dV2Np3KDM1j_xWFMeMQw_-qedLIG8zH9NSa3zG-HCZ4351EmJidKwQAnIqLUSMHit4UgbI0r0WrABi2Ddc_3ULnU4" />
-                    </button>
-                    <!-- User Dropdown Menu -->
-                    <div
-                        class="absolute right-0 mt-3 w-64 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-white/20 dark:border-slate-700/30 rounded-xl shadow-2xl opacity-0 invisible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-300 transform origin-top-right scale-95 group-focus-within:scale-100 z-50">
-                        <div class="p-4 border-b border-slate-200/50 dark:border-slate-700/50">
-                            <p class="text-primary-container dark:text-white font-bold font-lexend">Maverick</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">maverick@picklepro.com</p>
-                        </div>
-                        <div class="p-2">
-                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 hover:bg-orange-500 hover:text-white transition-colors"
-                                href="#">
-                                <span class="material-symbols-outlined text-lg">manage_accounts</span>
-                                <span class="font-medium">Manage Account</span>
-                            </a>
-                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                                href="#">
-                                <span class="material-symbols-outlined text-lg">logout</span>
-                                <span class="font-medium">Sign out</span>
-                            </a>
-                        </div>
-                    </div>
+                <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-orange-500 ml-2">
+                    <img alt="User profile"
+                        data-alt="Professional headshot of a smiling young male athlete with short hair and athletic attire"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpFwfKr0vg251lMWJn1BNaDYJj6MuwAdJImpY9r2D02AwCP_3rbH2Ru8c8r4Eomq6nuncoMyYmUCoVvMgQxU-is8kIsJeyKdpQDBaL0cP-oTLZCBehFcQd1P8GhxqRymRkf7yF2Kyi8o-IhFa9-2VK2B4jKTxANt7rstCjAeN9xWEyjtxvO6dV2Np3KDM1j_xWFMeMQw_-qedLIG8zH9NSa3zG-HCZ4351EmJidKwQAnIqLUSMHit4UgbI0r0WrABi2Ddc_3ULnU4" />
                 </div>
             </div>
         </header>
-        <!-- End of Header + nav bar 
-        ============================================= 
-        =============================================
-        =============================================
-        =============================================
-
-        -->
-        <!-- Main Content Area 
-        ============================================================
-        ============================================================
-        ============================================================
-        ============================================================
-        Main Content Area -->
+        <!-- Main Content Area -->
         <main class="flex-1 p-4 md:p-8 space-y-8 pb-24 md:pb-8">
             <!-- Hero Stats / Welcome -->
             <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
