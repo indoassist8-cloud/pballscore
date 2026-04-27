@@ -174,19 +174,19 @@ signupForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
     // Get user data
-    const firstName = document.getElementById('signup-firstname').value.trim();
-    const lastName = document.getElementById('signup-lastname').value.trim();
+    const fullName = document.getElementById('signup-fullname').value.trim();
+    //const lastName = document.getElementById('signup-lastname').value.trim();
     const email = document.getElementById('signup-email').value.trim();
     const pwd = document.getElementById('signup-password').value;
 
     // Validation
-    if (!firstName || !lastName) {
-        showMsg('Please enter your first and last name.', 'signup-msg');
+    if (!fullName) {
+        showMsg('Please enter your full name.', 'signup-msg');
         return;
     }
 
-    if (pwd.length < 6) {
-        showMsg('Password must be at least 6 characters long.', 'signup-msg');
+    if (pwd.length < 8) {
+        showMsg('Password must be at least 8 characters long.', 'signup-msg');
         return;
     }
 

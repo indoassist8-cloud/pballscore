@@ -317,23 +317,23 @@
                         id="tab-phone-reg" onclick="switchAuthTab('phone', 'reg')">Phone</button>
                 </div>
                 <div class="active" data-tab-content="" id="email-reg-form">
-                    <form class="space-y-3">
+                    <form class="space-y-3" id="signup-form">
                         <div>
                             <label class="block font-label-bold text-on-surface mb-1 text-sm">Full Name</label>
-                            <input
+                            <input id="signup-fullname"
                                 class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-xl focus:ring-2 focus:ring-secondary-container outline-none transition-all"
                                 placeholder="Enter your full name" type="text" />
                         </div>
                         <div>
                             <label class="block font-label-bold text-on-surface mb-1 text-sm">Email Address</label>
-                            <input
+                            <input id="signup-email"
                                 class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-xl focus:ring-2 focus:ring-secondary-container outline-none transition-all"
                                 placeholder="name@example.com" type="email" />
                         </div>
                         <div>
                             <label class="block font-label-bold text-on-surface mb-1 text-sm">Password</label>
                             <div class="relative">
-                                <input
+                                <input id="signup-password"
                                     class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-xl focus:ring-2 focus:ring-secondary-container outline-none transition-all"
                                     placeholder="Min. 8 characters" type="password" />
                                 <button
