@@ -91,11 +91,10 @@ export async function verifyOTP(code) {
 
 
 async function handleGoogleAuth(msgDivId) {
-    const auth = getAuth();
-    const provider = new GoogleAuthProvider();
+
     const db = getFirestore();
 
-    signInWithPopup(auth, provider)
+    signInWithPopup(auth, googleProvider)
         .then(async (result) => {
             const user = result.user;
 
