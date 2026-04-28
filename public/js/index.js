@@ -1,5 +1,6 @@
-import { auth, signOut } from './fbauth-sc.js';
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
+const auth = getAuth();
 const signOutBtn = document.getElementById('signOutBtn');
 
 if (signOutBtn) {
