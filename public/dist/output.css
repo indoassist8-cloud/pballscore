@@ -798,6 +798,10 @@ video {
   display: block;
 }
 
+.inline-block {
+  display: inline-block;
+}
+
 .flex {
   display: flex;
 }
@@ -1473,6 +1477,10 @@ video {
   padding-top: 2rem;
 }
 
+.text-left {
+  text-align: left;
+}
+
 .text-center {
   text-align: center;
 }
@@ -1967,6 +1975,51 @@ video {
   opacity: 0;
   pointer-events: none;
   /* Prevents clicking on it while invisible */
+}
+
+/* Core styles for the merge */
+
+.relative {
+  position: relative;
+}
+
+.hidden {
+  display: none;
+}
+
+.profile-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  /* Appears right below the button */
+  margin-top: 0.5rem;
+  width: 240px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  z-index: 50;
+}
+
+/* Base styles for items */
+
+.profile-dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: #475569;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.profile-dropdown-item:hover {
+  background-color: #f8fafc;
+}
+
+.profile-dropdown-divider {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 0.25rem 0;
 }
 
 .selection\:bg-secondary-container\/30 *::-moz-selection {
