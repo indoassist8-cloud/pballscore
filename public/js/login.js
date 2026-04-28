@@ -5,6 +5,7 @@ import {
     RecaptchaVerifier,
     signInWithPhoneNumber
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
 // Helper function to show errors in the UI
 let errorTimer; // Variable to keep track of the active timer
