@@ -1,3 +1,15 @@
+@tailwind base;
+/* Injects Tailwind's reset styles */
+@tailwind components;
+/* Injects component classes like container */
+@tailwind utilities;
+/* Injects utility classes like flex, pt-4, etc. */
+
+/* You can write your own custom CSS below these lines */
+.my-custom-button {
+    @apply bg-blue-500 text-white p-2 rounded;
+}
+
 .error-box {
     background-color: #f8d7da;
     color: #721c24;
