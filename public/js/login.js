@@ -146,9 +146,13 @@ async function handleGoogleAuth(msgDivId) {
             localStorage.setItem('loggedInUserId', user.uid);
             localStorage.setItem("loginTime", Date.now()); // add for session timeout
 
-            setTimeout(() => {
-                window.location.href = 'index.html';
+
+            window.location.href = 'index.html';
+
+            /*setTimeout(() => {
+                
             }, 1000);
+            */
         })
         .catch((error) => {
             console.error('Google sign in error:', error);
