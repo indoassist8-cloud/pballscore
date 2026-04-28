@@ -166,32 +166,11 @@
                     class="p-2 text-slate-600 dark:text-slate-400 hover:text-orange-500 transition-colors duration-200">
                     <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
                 </button>
-                <div class="relative inline-block text-left">
+                <div class="relative group">
                     <button id="settingsBtn"
                         class="p-2 text-slate-600 dark:text-slate-400 hover:text-orange-500 transition-colors duration-200">
                         <span class="material-symbols-outlined" data-icon="settings">settings</span>
                     </button>
-
-                    <div class="profile-dropdown hidden" id="profileDropdown">
-                        <div class="profile-dropdown-header">
-                            <div class="profile-avatar-small" id="dropdownAvatar">A</div>
-                            <div class="profile-info">
-                                <div class="profile-name" id="dropdownName">Admin User</div>
-                                <div class="profile-email" id="dropdownEmail">admin@example.com</div>
-                            </div>
-                        </div>
-                        <div class="profile-dropdown-divider"></div>
-                        <a href="#" onclick="loadPage('profile'); toggleDropdown();" class="profile-dropdown-item">
-                            <i class='bx bx-user'></i> Profile Settings
-                        </a>
-                        <a href="#" onclick="loadPage('password'); toggleDropdown();" class="profile-dropdown-item">
-                            <i class='bx bx-lock-alt'></i> Change Password
-                        </a>
-                        <div class="profile-dropdown-divider"></div>
-                        <a id="logout" href="#" class="profile-dropdown-item logout-item">
-                            <i class='bx bx-log-out'></i> Logout
-                        </a>
-                    </div>
                 </div>
                 <div class="relative group">
                     <button
@@ -213,8 +192,9 @@
                                 <span class="material-symbols-outlined text-lg">manage_accounts</span>
                                 <span class="font-medium">Manage Account</span>
                             </a>
-                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                                href="#">
+                            <a id="signOutBtn"
+                                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                href="javascript:void(0)">
                                 <span class="material-symbols-outlined text-lg">logout</span>
                                 <span class="font-medium">Sign out</span>
                             </a>

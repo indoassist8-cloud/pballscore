@@ -1,29 +1,21 @@
 import { auth, signOut } from './fbauth-sc.js';
 
-// Logout functionality
-document.getElementById('logout').addEventListener('click', (e) => {
-    e.preventDefault();
-    closeProfileDropdown();
-    signOut(auth);
-});
+const signOutBtn = document.getElementById('signOutBtn');
 
-const settingsBtn = document.getElementById('settingsBtn');
-const profileDropdown = document.getElementById('profileDropdown');
+if (signOutBtn) {
+    signOutBtn.addEventListener('click', () => {
+        signOut(auth)
+            .then(() => {
+                // Sign-out successful.
+                console.log("User signed out successfully.");
 
-// Toggle dropdown on click
-settingsBtn.addEventListener('click', (e) => {
-    e.stopPropagation(); // Prevent immediate closing
-    profileDropdown.classList.toggle('hidden');
-});
-
-// Close when clicking outside
-window.addEventListener('click', () => {
-    if (!profileDropdown.classList.contains('hidden')) {
-        profileDropdown.classList.add('hidden');
-    }
-});
-
-// Helper to close manually from links
-function toggleDropdown() {
-    profileDropdown.classList.add('hidden');
+                // Redirect to login page
+                window.location.href = "login.html";
+            })
+            .catch((error) => {
+                // An error happened.
+                console.error("Sign out error:", error.message);
+                alert("Error signing out. Please try again.");
+            });
+    });
 }
