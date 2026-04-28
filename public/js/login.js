@@ -10,7 +10,7 @@ import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/12
 // Helper function to show errors in the UI
 let errorTimer; // Variable to keep track of the active timer
 
-function showError(message) {
+function showMsg(message) {
     const errorDiv = document.getElementById('error-message');
     clearTimeout(errorTimer);
 
@@ -48,13 +48,13 @@ function showError(message) {
 */
 // --- 2. EMAIL/PASSWORD AUTHENTICATION ---
 export async function loginWithEmail(email, password) {
-    showError(null); // Clear old errors
+    showMsg(null); // Clear old errors
     try {
         await signInWithEmailAndPassword(auth, email, password);
         window.location.href = 'index.html';
     } catch (error) {
         console.error("Email Login Error:", error.message);
-        showError("Invalid email or password.");
+        showMsg("Invalid email or password.");
     }
 }
 
@@ -66,27 +66,27 @@ window.recaptchaVerifier = new RecaptchaVerifier(auth, 'login-button', {
 });
 
 export async function sendOTP(phoneNumber) {
-    showError(null); // Clear old errors
+    showMsg(null); // Clear old errors
     try {
         const appVerifier = window.recaptchaVerifier;
         const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
         window.confirmationResult = confirmationResult;
-        showError("OTP Sent!");
+        showMsg("OTP Sent!");
         // Show your OTP input field here
     } catch (error) {
         console.error("SMS Error:", error.message);
-        showError("Failed to send SMS. Check your number format (e.g., +62812...)");
+        showMsg("Failed to send SMS. Check your number format (e.g., +62812...)");
     }
 }
 
 export async function verifyOTP(code) {
-    showError(null); // Clear old errors
+    showMsg(null); // Clear old errors
     try {
         await window.confirmationResult.confirm(code);
         window.location.href = 'index.html';
     } catch (error) {
         console.error("OTP Error:", error.message);
-        showError("Invalid OTP code.");
+        showMsg("Invalid OTP code.");
     }
 }
 
@@ -120,6 +120,8 @@ async function handleGoogleAuth(msgDivId) {
 
             // --- DIFFERENTIATION BASED ON msgDivId ---
             // If the ID passed is 'signup-msg', we trigger the Go backend
+
+            /* di komen dlu
             if (msgDivId === 'signup-msg') {
                 try {
                     await fetch(`${GO_SERVER_URL}/register`, {
@@ -137,6 +139,7 @@ async function handleGoogleAuth(msgDivId) {
                     console.error('Go backend error:', err);
                 }
             }
+                */
             // -----------------------------------------
 
             showMsg('Successfully signed in with Google!', msgDivId, true);
@@ -190,7 +193,7 @@ signupForm.addEventListener('submit', (e) => {
         return;
     }
 
-    const auth = getAuth();
+
     const db = getFirestore();
 
     // Disable button to prevent double submission
