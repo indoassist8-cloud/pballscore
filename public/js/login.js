@@ -4,6 +4,8 @@ import {
     signInWithPopup,
     RecaptchaVerifier,
     createUserWithEmailAndPassword,
+    sendEmailVerification,
+    sendPasswordResetEmail,
     signInWithPhoneNumber
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
