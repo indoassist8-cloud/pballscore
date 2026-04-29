@@ -10,6 +10,9 @@ import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/12
 // Helper function to show errors in the UI
 let errorTimer; // Variable to keep track of the active timer
 
+
+const GO_SERVER_URL = "https://pball-score.web.app"; // need to change this if we link to a new domain
+
 function showMsg(message) {
     const errorDiv = document.getElementById('error-message');
     clearTimeout(errorTimer);
@@ -108,9 +111,7 @@ async function handleGoogleAuth(msgDivId) {
             // Save user data to Firestore
             const userData = {
                 email: user.email,
-                firstName: firstName,
-                lastName: lastName,
-                displayName: displayName,
+                fullName: displayName,
                 photoURL: user.photoURL || '',
                 provider: 'google'
             };
@@ -121,17 +122,17 @@ async function handleGoogleAuth(msgDivId) {
             // --- DIFFERENTIATION BASED ON msgDivId ---
             // If the ID passed is 'signup-msg', we trigger the Go backend
 
-            /* di komen dlu
+            // sign up via google auth - only store firebaseid, email, fullname. 
+            // phone number save to null 
             if (msgDivId === 'signup-msg') {
                 try {
-                    await fetch(`${GO_SERVER_URL}/register`, {
+                    await fetch(`${GO_SERVER_URL}/api/signup`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             FirebaseUID: user.uid,
                             Email: user.email,
-                            FirstName: firstName,
-                            LastName: lastName
+                            FullName: fullName
                         }),
                     });
                     console.log("Signup detected via msgDivId: Plan initialized in Go.");
@@ -139,7 +140,7 @@ async function handleGoogleAuth(msgDivId) {
                     console.error('Go backend error:', err);
                 }
             }
-                */
+
             // -----------------------------------------
 
             showMsg('Successfully signed in with Google!', msgDivId, true);
@@ -212,11 +213,8 @@ signupForm.addEventListener('submit', (e) => {
             // Prepare user data
             const userData = {
                 email: email,
-                firstName: firstName,
-                lastName: lastName,
-                displayName: `${firstName} ${lastName}`,
-                provider: 'email',
-                createdAt: new Date().toISOString()
+                fullName: fullName,
+                provider: 'email'
             };
 
             // Save to Firestore
