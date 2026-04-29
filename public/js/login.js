@@ -3,6 +3,7 @@ import {
     signInWithEmailAndPassword,
     signInWithPopup,
     RecaptchaVerifier,
+    createUserWithEmailAndPassword,
     signInWithPhoneNumber
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
@@ -95,7 +96,7 @@ export async function verifyOTP(code) {
 
 
 async function handleGoogleAuth(msgDivId) {
-
+    showMsg(null); // Clear old errors
     const db = getFirestore();
 
     signInWithPopup(auth, googleProvider)
@@ -180,7 +181,7 @@ btnGoogleSignup.addEventListener('click', (event) => {
 const signupForm = document.querySelector('#signup-form');
 signupForm.addEventListener('submit', (e) => {
     e.preventDefault();
-
+    showMsg(null); // Clear old errors
     // Get user data
     const fullName = document.getElementById('signup-fullname').value.trim();
     //const lastName = document.getElementById('signup-lastname').value.trim();
