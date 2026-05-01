@@ -37,9 +37,11 @@ function showMsg(msg, divId, isSuccess = false) {
 
     // 3. Apply Colors
     if (isSuccess) {
-        msgDiv.classList.add('bg-green-100', 'text-green-700', 'border-green-400');
+        // Using your custom 'tertiary' or 'primary' logic
+        msgDiv.classList.add('bg-surface-container-high', 'text-on-surface', 'border-outline-variant');
     } else {
-        msgDiv.classList.add('bg-red-100', 'text-red-700', 'border-red-400');
+        // Using your custom 'error' theme colors
+        msgDiv.classList.add('bg-error-container', 'text-on-error-container', 'border-error');
     }
 
     // 4. Auto-hide logic
