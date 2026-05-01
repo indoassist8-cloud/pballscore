@@ -16,26 +16,22 @@ let errorTimer; // Variable to keep track of the active timer
 
 const GO_SERVER_URL = "https://pball-score.web.app"; // need to change this if we link to a new domain
 
-function showMsg(message) {
-    const errorDiv = document.getElementById('error-message');
-    clearTimeout(errorTimer);
+function showMsg(msg, divId, isSuccess = false) {
+    const msgDiv = document.getElementById(divId);
+    msgDiv.style.display = "block";
+    msgDiv.innerHTML = msg;
+    msgDiv.className = isSuccess ? 'message-box success' : 'message-box';
 
-    if (message) {
-        errorDiv.textContent = message;
-        errorDiv.classList.remove('error-hidden'); // Show it
-        errorDiv.hidden = false;
-
-        errorTimer = setTimeout(() => {
-            errorDiv.classList.add('error-hidden'); // Start the fade
-
-            // Wait for the CSS animation (0.5s) to finish before actually hiding the element
-            setTimeout(() => { errorDiv.hidden = true; }, 500);
-        }, 5000);
-
-    } else {
-        errorDiv.hidden = true;
-    }
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        msgDiv.style.opacity = 0;
+        setTimeout(() => {
+            msgDiv.style.display = "none";
+            msgDiv.style.opacity = 1;
+        }, 300);
+    }, 5000);
 }
+
 
 
 // --- 1. GOOGLE AUTHENTICATION ---
