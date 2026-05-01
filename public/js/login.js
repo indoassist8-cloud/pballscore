@@ -21,28 +21,34 @@ function showMsg(msg, divId, isSuccess = false) {
     if (!msgDiv) return;
 
     if (!msg) {
+        msgDiv.style.display = "none"; // Hard hide
         msgDiv.classList.add('hidden');
-        msgDiv.classList.remove('block');
         return;
     }
 
-    // 1. Reset and Show
+    // 1. Force Display and Opacity
     msgDiv.innerHTML = msg;
-    msgDiv.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
-    msgDiv.style.opacity = "1";
-    msgDiv.classList.add('block', 'p-3', 'rounded-lg', 'text-sm', 'mb-4', 'transition-opacity', 'duration-300');
+    msgDiv.style.display = "block"; // This overrides the inline 'display: none'
+    msgDiv.style.opacity = "1";     // This overrides the inline 'opacity: 0'
 
-    // 2. Apply Success or Error colors
+    // 2. Manage Tailwind Classes
+    msgDiv.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'border-red-400', 'bg-green-100', 'text-green-700', 'border-green-400');
+    msgDiv.classList.add('p-3', 'rounded-lg', 'text-sm', 'mb-4', 'transition-opacity', 'duration-300', 'border');
+
+    // 3. Apply Colors
     if (isSuccess) {
-        msgDiv.classList.add('bg-green-100', 'text-green-700', 'border', 'border-green-400');
+        msgDiv.classList.add('bg-green-100', 'text-green-700', 'border-green-400');
     } else {
-        msgDiv.classList.add('bg-red-100', 'text-red-700', 'border', 'border-red-400');
+        msgDiv.classList.add('bg-red-100', 'text-red-700', 'border-red-400');
     }
 
-    // 3. Auto-hide after 5 seconds
+    // 4. Auto-hide logic
+    // Clear any existing timeouts if you want to be fancy, 
+    // but for now, this will work:
     setTimeout(() => {
         msgDiv.style.opacity = "0";
         setTimeout(() => {
+            msgDiv.style.display = "none";
             msgDiv.classList.add('hidden');
         }, 300);
     }, 5000);
