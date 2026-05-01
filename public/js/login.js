@@ -165,7 +165,7 @@ async function handleGoogleAuth(msgDivId) {
 const btnGoogleLogin = document.getElementById('google-btn');
 btnGoogleLogin.addEventListener('click', (event) => {
     event.preventDefault();
-    handleGoogleAuth('login-msg');
+    handleGoogleAuth('signin-msg');
 });
 
 // Google Sign Up (register form)
