@@ -22,6 +22,7 @@ function showMsg(msg, divId, isSuccess = false) {
 
     if (!msg) {
         msgDiv.classList.add('hidden');
+        msgDiv.classList.remove('block');
         return;
     }
 
