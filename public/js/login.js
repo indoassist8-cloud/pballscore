@@ -18,20 +18,42 @@ const GO_SERVER_URL = "https://pball-score.web.app"; // need to change this if w
 
 function showMsg(msg, divId, isSuccess = false) {
     const msgDiv = document.getElementById(divId);
-    msgDiv.style.display = "block";
-    msgDiv.innerHTML = msg;
-    msgDiv.className = isSuccess ? 'message-box success' : 'message-box';
+    if (!msgDiv) return;
 
-    // Auto-hide after 5 seconds
+    if (!msg) {
+        msgDiv.classList.add('hidden');
+        return;
+    }
+
+    // 1. Reset and Show
+    msgDiv.innerHTML = msg;
+    msgDiv.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
+    msgDiv.style.opacity = "1";
+    msgDiv.classList.add('block', 'p-3', 'rounded-lg', 'text-sm', 'mb-4', 'transition-opacity', 'duration-300');
+
+    // 2. Apply Success or Error colors
+    if (isSuccess) {
+        msgDiv.classList.add('bg-green-100', 'text-green-700', 'border', 'border-green-400');
+    } else {
+        msgDiv.classList.add('bg-red-100', 'text-red-700', 'border', 'border-red-400');
+    }
+
+    // 3. Auto-hide after 5 seconds
     setTimeout(() => {
-        msgDiv.style.opacity = 0;
+        msgDiv.style.opacity = "0";
         setTimeout(() => {
-            msgDiv.style.display = "none";
-            msgDiv.style.opacity = 1;
+            msgDiv.classList.add('hidden');
         }, 300);
     }, 5000);
 }
 
+function clearAllMessages() {
+    const boxes = document.querySelectorAll('.msg-box');
+    boxes.forEach(box => {
+        box.style.display = 'none';
+        box.innerHTML = '';
+    });
+}
 
 
 // --- 1. GOOGLE AUTHENTICATION ---
@@ -50,7 +72,7 @@ function showMsg(msg, divId, isSuccess = false) {
 */
 // --- 2. EMAIL/PASSWORD AUTHENTICATION ---
 export async function loginWithEmail(email, password) {
-    showMsg(null); // Clear old errors
+    clearAllMessages(); // Clear old errors
     try {
         await signInWithEmailAndPassword(auth, email, password);
         window.location.href = 'index.html';
@@ -68,7 +90,7 @@ window.recaptchaVerifier = new RecaptchaVerifier(auth, 'login-button', {
 });
 
 export async function sendOTP(phoneNumber) {
-    showMsg(null); // Clear old errors
+    clearAllMessages(); // Clear old errors
     try {
         const appVerifier = window.recaptchaVerifier;
         const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
@@ -82,7 +104,7 @@ export async function sendOTP(phoneNumber) {
 }
 
 export async function verifyOTP(code) {
-    showMsg(null); // Clear old errors
+    clearAllMessages(); // Clear old errors
     try {
         await window.confirmationResult.confirm(code);
         window.location.href = 'index.html';
@@ -94,7 +116,7 @@ export async function verifyOTP(code) {
 
 
 async function handleGoogleAuth(msgDivId) {
-    showMsg(null); // Clear old errors
+    clearAllMessages(); // Clear old errors
     const db = getFirestore();
 
     signInWithPopup(auth, googleProvider)
@@ -179,7 +201,7 @@ btnGoogleSignup.addEventListener('click', (event) => {
 const signupForm = document.querySelector('#signup-form');
 signupForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    showMsg(null); // Clear old errors
+    clearAllMessages(); // Clear old errors
     // Get user data
     const fullName = document.getElementById('signup-fullname').value.trim();
     //const lastName = document.getElementById('signup-lastname').value.trim();
