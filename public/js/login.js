@@ -146,6 +146,7 @@ window.recaptchaVerifier = new RecaptchaVerifier(auth, 'submitSignIn', {
 });
 
 export async function sendOTP(phoneNumber) {
+    event.preventDefault();
     clearAllMessages(); // Clear old errors
     try {
         const appVerifier = window.recaptchaVerifier;
@@ -160,6 +161,7 @@ export async function sendOTP(phoneNumber) {
 }
 
 export async function verifyOTP(code) {
+    event.preventDefault();
     clearAllMessages(); // Clear old errors
     try {
         await window.confirmationResult.confirm(code);
