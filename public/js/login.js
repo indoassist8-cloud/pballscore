@@ -65,22 +65,11 @@ function clearAllMessages() {
 }
 
 
-// --- 1. GOOGLE AUTHENTICATION ---
-/*export async function loginWithGoogle() {
-    showError(null); // Clear old errors
-    try {
-        const result = await signInWithPopup(auth, googleProvider);
-        console.log("Logged in as:", result.user.displayName);
-        window.location.href = 'index.html';
-    } catch (error) {
-        console.error("Google Login Error:", error.message);
-        showError("Google login failed. Please try again.");
 
-    }
-}
-*/
 // --- 2. EMAIL/PASSWORD AUTHENTICATION ---
+/*
 export async function loginWithEmail(email, password) {
+    event.preventDefault();
     clearAllMessages(); // Clear old errors
     try {
         await signInWithEmailAndPassword(auth, email, password);
@@ -90,6 +79,65 @@ export async function loginWithEmail(email, password) {
         showMsg("Invalid email or password.");
     }
 }
+*/
+
+const btnSignIn = document.getElementById('submitSignIn');
+btnSignIn.addEventListener('click', (event) => {
+    event.preventDefault();
+    clearAllMessages(); // Clear old errors
+    // Get user data
+    const email = document.getElementById('login-email').value.trim();
+    const pwd = document.getElementById('login-password').value;
+
+    if (!email || !pwd) {
+        showMsg('Please enter your email and password.', 'signin-msg');
+        return;
+    }
+
+    const auth = getAuth();
+
+    // Disable button
+    btnSignIn.disabled = true;
+    btnSignIn.textContent = 'Signing in...';
+
+    signInWithEmailAndPassword(auth, email, pwd)
+        .then((userCredential) => {
+            const user = userCredential.user;
+            // Check if email is verified
+            if (!user.emailVerified) {
+                // Force sign out because we don't want them in the app yet
+                auth.signOut();
+                showMsg('Please verify your email before logging in.', 'signin-msg');
+                return;
+            }
+            showMsg('Successfully signed in!', 'signin-msg', true);
+            localStorage.setItem('loggedInUserId', user.uid);
+            localStorage.setItem("loginTime", Date.now()); // add for session timeout
+
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            let errorMessage = 'Sign in failed. Please try again.';
+
+            if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/wrong-password') {
+                errorMessage = 'Invalid email or password. Please check your credentials.';
+            } else if (errorCode === 'auth/user-not-found') {
+                errorMessage = 'No account found with this email. Please sign up first.';
+            } else if (errorCode === 'auth/too-many-requests') {
+                errorMessage = 'Too many failed attempts. Please try again later.';
+            }
+
+            showMsg(errorMessage, 'signin-msg');
+        })
+        .finally(() => {
+            btnSignIn.disabled = false;
+            btnSignIn.textContent = 'Sign in';
+        });
+});
+
 
 // --- 3. PHONE AUTHENTICATION ---
 // Initialize reCAPTCHA (Invisible)
