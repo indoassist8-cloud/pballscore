@@ -94,7 +94,6 @@ btnSignIn.addEventListener('click', (event) => {
         return;
     }
 
-    const auth = getAuth();
 
     // Disable button
     btnSignIn.disabled = true;
