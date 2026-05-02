@@ -140,7 +140,7 @@ btnSignIn.addEventListener('click', (event) => {
 
 // --- 3. PHONE AUTHENTICATION ---
 // Initialize reCAPTCHA (Invisible)
-window.recaptchaVerifier = new RecaptchaVerifier(auth, 'login-button', {
+window.recaptchaVerifier = new RecaptchaVerifier(auth, 'submitSignIn', {
     'size': 'invisible',
     'callback': (response) => { /* reCAPTCHA solved */ }
 });
