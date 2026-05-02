@@ -145,12 +145,31 @@ window.recaptchaVerifier = new RecaptchaVerifier(auth, 'submitSignIn', {
     'callback': (response) => { /* reCAPTCHA solved */ }
 });
 
+
+// A simple way to clean the input
+function formatIndonesianNumber(rawInput) {
+    let cleaned = rawInput.replace(/\D/g, ''); // Remove everything that isn't a digit
+
+    if (cleaned.startsWith('0')) {
+        cleaned = '62' + cleaned.substring(1);
+    } else if (cleaned.startsWith('8')) {
+        cleaned = '62' + cleaned;
+    }
+
+    return '+' + cleaned;
+}
+
+// Use it like this:
+
+// Now pass 'phoneNumber' to signInWithPhoneNumber
+
 export async function sendOTP(phoneNumber) {
     event.preventDefault();
     clearAllMessages(); // Clear old errors
+    const cleanPhoneNumber = formatIndonesianNumber(document.getElementById('phone-input').value);
     try {
         const appVerifier = window.recaptchaVerifier;
-        const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+        const confirmationResult = await signInWithPhoneNumber(auth, cleanPhoneNumber, appVerifier);
         window.confirmationResult = confirmationResult;
         showMsg("OTP Sent!");
         // Show your OTP input field here
