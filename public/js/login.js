@@ -17,34 +17,38 @@ let errorTimer; // Variable to keep track of the active timer
 const GO_SERVER_URL = "https://pball-score.web.app"; // need to change this if we link to a new domain
 
 
-// We declare the variable globally but initialize it only when the DOM is ready
 window.recaptchaVerifier = null;
 
-document.addEventListener('DOMContentLoaded', () => {
-    try {
-        // Check if the container exists first to avoid the null error
+const initRecaptcha = () => {
+    const container = document.getElementById('recaptcha-container');
 
-        console.log("DEBUG: Auth object is:", auth);
-        console.log("DEBUG: Container element is:", document.getElementById('recaptcha-container'));
-        const container = document.getElementById('recaptcha-container');
-
-        if (container && auth) {
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                'size': 'invisible',
-                'sitekey': '6LcAy9YsAAAAAFVr3zB5RguYtORjoqNE5Joitk2_',
-                'callback': (response) => {
-                    console.log("reCAPTCHA solved");
-                }
-            });
-            // This actually renders it
-            window.recaptchaVerifier.render();
-        } else {
-            console.log("Initialization failed: Check if 'recaptcha-container' exists in HTML and 'auth' is loaded.");
-        }
-    } catch (error) {
-        console.log("RecaptchaVerifier Error:", error);
+    if (!auth) {
+        console.log("Auth is not initialized! Check fbauth.js exports.");
+        return;
     }
-});
+
+    if (!container) {
+        console.log("HTML element 'recaptcha-container' not found.");
+        return;
+    }
+
+    try {
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+            'size': 'invisible',
+            'sitekey': '6LcAy9YsAAAAAFVr3zB5RguYtORjoqNE5Joitk2_'
+        });
+
+        window.recaptchaVerifier.render().then((widgetId) => {
+            window.recaptchaWidgetId = widgetId;
+            console.log("ReCAPTCHA rendered successfully.");
+        });
+    } catch (err) {
+        console.log("Creation Error:", err);
+    }
+};
+
+// Use window.onload to ensure EVERYTHING (including imports) is ready
+window.onload = initRecaptcha;
 
 
 function showMsg(msg, divId, isSuccess = false) {
