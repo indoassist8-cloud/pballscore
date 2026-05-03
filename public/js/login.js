@@ -33,9 +33,17 @@ const initRecaptcha = () => {
     }
 
     try {
+
+
         window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
             'size': 'invisible',
-            'sitekey': '6LcAy9YsAAAAAFVr3zB5RguYtORjoqNE5Joitk2_'
+            'sitekey': '6LdNOdcsAAAAANv159SdFEUtMydVdwU_Zh6uPIFM',  // ← replace this
+            'callback': (response) => {
+                console.log("reCAPTCHA solved");
+            },
+            'expired-callback': () => {
+                console.log("reCAPTCHA expired, please try again");
+            }
         });
 
         window.recaptchaVerifier.render().then((widgetId) => {
