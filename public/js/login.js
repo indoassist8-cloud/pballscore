@@ -23,6 +23,9 @@ window.recaptchaVerifier = null;
 document.addEventListener('DOMContentLoaded', () => {
     try {
         // Check if the container exists first to avoid the null error
+
+        console.log("DEBUG: Auth object is:", auth);
+        console.log("DEBUG: Container element is:", document.getElementById('recaptcha-container'));
         const container = document.getElementById('recaptcha-container');
 
         if (container && auth) {
