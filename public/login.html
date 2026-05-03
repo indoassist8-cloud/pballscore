@@ -199,15 +199,17 @@
                                     class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-label-bold border-r border-outline-variant pr-3">+62</span>
                                 <input
                                     class="w-full pl-16 pr-4 py-3 bg-white border border-outline-variant rounded-xl focus:ring-2 focus:ring-secondary-container focus:border-secondary-container transition-all outline-none"
-                                    id="login-phone" placeholder="8881234" type="tel" />
+                                    id="signin-phone" placeholder="8881234" type="tel" />
                             </div>
                         </div>
                         <button
                             class="w-full bg-primary-container text-white font-headline-md text-base py-4 rounded-xl shadow-lg shadow-primary-container/10 hover:scale-[1.01] transition-all"
-                            onclick="sendOTP(document.getElementById('login-phone').value)">Send Code</button>
-                        <div id="otp-section" style="display:none">
-                            <input type="text" id="otp-code" placeholder="123456">
-                            <button onclick="verifyOTP(document.getElementById('otp-code').value)">Verify</button>
+                            onclick="sendOTP(event, 'signin-phone','signInOTPsection','signin-msg')">Send Code</button>
+
+                        <div id="signInOTPsection" style="display:none">
+                            <input type="text" id="signInOTP" placeholder="123456">
+                            <button
+                                onclick="verifyOTP(document.getElementById('signInOTP').value, 'signin-msg')">Verify</button>
                         </div>
                     </form>
                 </div>
@@ -316,11 +318,11 @@
                         </div>
                         <button
                             class="w-full bg-primary-container text-white font-headline-md text-base py-4 rounded-xl shadow-lg shadow-primary-container/10 hover:scale-[1.01] transition-all"
-                            onclick="sendOTP(document.getElementById('signup-phone').value)">Send Code</button>
-                        <div id="otp-section" style="display:none">
-                            <input type="text" id="otp-signup-code" placeholder="123456">
+                            onclick="sendOTP(event, 'signup-phone','signUpOTPsection','signup-msg')">Send Code</button>
+                        <div id=" signUpOTPsection" style="display:none">
+                            <input type="text" id="signUpOTP" placeholder="123456">
                             <button
-                                onclick="verifyOTP(document.getElementById('otp-signup-code').value)">Verify</button>
+                                onclick="verifyOTP(document.getElementById('signUpOTP').value,'signup-msg')">Verify</button>
                         </div>
                     </form>
                 </div>

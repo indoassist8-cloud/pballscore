@@ -163,23 +163,35 @@ function formatIndonesianNumber(rawInput) {
 
 // Now pass 'phoneNumber' to signInWithPhoneNumber
 
-export async function sendOTP(phoneNumber) {
+export async function sendOTP(event, inputFieldId, sectionId, msgId) {
     event.preventDefault();
-    clearAllMessages(); // Clear old errors
-    const cleanPhoneNumber = formatIndonesianNumber(document.getElementById('phone-input').value);
+    clearAllMessages();
+
+    const phoneElement = document.getElementById(inputFieldId);
+    if (!phoneElement) return;
+
+    const cleanPhoneNumber = formatIndonesianNumber(phoneElement.value);
+
     try {
         const appVerifier = window.recaptchaVerifier;
         const confirmationResult = await signInWithPhoneNumber(auth, cleanPhoneNumber, appVerifier);
+
         window.confirmationResult = confirmationResult;
-        showMsg("OTP Sent!");
-        // Show your OTP input field here
+
+        // Show the specific OTP section for this form
+        const otpSection = document.getElementById(sectionId);
+        if (otpSection) {
+            otpSection.style.display = "block";
+        }
+
+        showMsg('OTP Sent.', msgId);
     } catch (error) {
         console.error("SMS Error:", error.message);
-        showMsg("Failed to send SMS. Check your number format (e.g., +62812...)");
+        showMsg("Failed to send SMS.", msgId);
     }
 }
 
-export async function verifyOTP(code) {
+export async function verifyOTP(code, msgId) {
     event.preventDefault();
     clearAllMessages(); // Clear old errors
     try {
@@ -187,7 +199,7 @@ export async function verifyOTP(code) {
         window.location.href = 'index.html';
     } catch (error) {
         console.error("OTP Error:", error.message);
-        showMsg("Invalid OTP code.");
+        showMsg("Invalid OTP code.", msgId);
     }
 }
 
