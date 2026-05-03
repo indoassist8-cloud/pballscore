@@ -39,10 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // This actually renders it
             window.recaptchaVerifier.render();
         } else {
-            console.error("Initialization failed: Check if 'recaptcha-container' exists in HTML and 'auth' is loaded.");
+            console.log("Initialization failed: Check if 'recaptcha-container' exists in HTML and 'auth' is loaded.");
         }
     } catch (error) {
-        console.error("RecaptchaVerifier Error:", error);
+        console.log("RecaptchaVerifier Error:", error);
     }
 });
 
