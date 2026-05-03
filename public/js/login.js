@@ -16,6 +16,18 @@ let errorTimer; // Variable to keep track of the active timer
 
 const GO_SERVER_URL = "https://pball-score.web.app"; // need to change this if we link to a new domain
 
+
+window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+    'size': 'invisible', // or 'normal' if you want the "I am not a robot" checkbox
+    'sitekey': '6LcAy9YsAAAAAFVr3zB5RguYtORjoqNE5Joitk2_', // <--- PASTE YOUR SITE KEY HERE
+    'callback': (response) => {
+        // reCAPTCHA solved!
+    },
+    'expired-callback': () => {
+        // Response expired. Ask user to solve reCAPTCHA again.
+    }
+});
+
 function showMsg(msg, divId, isSuccess = false) {
     const msgDiv = document.getElementById(divId);
     if (!msgDiv) return;
