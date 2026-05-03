@@ -17,16 +17,32 @@ let errorTimer; // Variable to keep track of the active timer
 const GO_SERVER_URL = "https://pball-score.web.app"; // need to change this if we link to a new domain
 
 
-window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-    'size': 'invisible', // or 'normal' if you want the "I am not a robot" checkbox
-    'sitekey': '6LcAy9YsAAAAAFVr3zB5RguYtORjoqNE5Joitk2_', // <--- PASTE YOUR SITE KEY HERE
-    'callback': (response) => {
-        // reCAPTCHA solved!
-    },
-    'expired-callback': () => {
-        // Response expired. Ask user to solve reCAPTCHA again.
+// We declare the variable globally but initialize it only when the DOM is ready
+window.recaptchaVerifier = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        // Check if the container exists first to avoid the null error
+        const container = document.getElementById('recaptcha-container');
+
+        if (container && auth) {
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                'size': 'invisible',
+                'sitekey': '6LcAy9YsAAAAAFVr3zB5RguYtORjoqNE5Joitk2_',
+                'callback': (response) => {
+                    console.log("reCAPTCHA solved");
+                }
+            });
+            // This actually renders it
+            window.recaptchaVerifier.render();
+        } else {
+            console.error("Initialization failed: Check if 'recaptcha-container' exists in HTML and 'auth' is loaded.");
+        }
+    } catch (error) {
+        console.error("RecaptchaVerifier Error:", error);
     }
 });
+
 
 function showMsg(msg, divId, isSuccess = false) {
     const msgDiv = document.getElementById(divId);
