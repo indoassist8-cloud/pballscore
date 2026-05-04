@@ -154,9 +154,10 @@
                     <button
                         class="flex-1 py-2 px-4 rounded-lg font-label-bold text-xs transition-all bg-white text-primary shadow-sm"
                         id="tab-email-login" onclick="switchAuthTab('email', 'login')">Email</button>
-                    <button
+                    <!--<button
                         class="flex-1 py-2 px-4 rounded-lg font-label-bold text-xs transition-all text-on-surface-variant hover:text-primary"
                         id="tab-phone-login" onclick="switchAuthTab('phone', 'login')">Phone</button>
+                        -->
                 </div>
                 <div class="active" data-tab-content="" id="email-login-form">
                     <form class="space-y-4" id="login-form-submit">
@@ -190,7 +191,7 @@
                 signin phone number
                 signin phone number
                 -->
-                <div data-tab-content="" id="phone-login-form">
+                <div data-tab-content="" id="phone-login-form" style="display: none;">
                     <form class="space-y-4">
                         <div>
                             <label class="block font-label-bold text-on-surface mb-1 text-sm" for="login-phone">Phone
@@ -254,13 +255,16 @@
                         Other Options</span>
                     <div class="flex-grow border-t border-outline-variant"></div>
                 </div>
+
                 <div class="bg-surface-container-low p-1 rounded-xl flex mb-6">
                     <button
                         class="flex-1 py-2 px-4 rounded-lg font-label-bold text-xs transition-all bg-white text-primary shadow-sm"
                         id="tab-email-reg" onclick="switchAuthTab('email', 'reg')">Email</button>
-                    <button
+                    <!-- 
+                        <button
                         class="flex-1 py-2 px-4 rounded-lg font-label-bold text-xs transition-all text-on-surface-variant hover:text-primary"
                         id="tab-phone-reg" onclick="switchAuthTab('phone', 'reg')">Phone</button>
+                -->
                 </div>
                 <div class="active" data-tab-content="" id="email-reg-form">
                     <form class="space-y-3" id="signup-form">
@@ -305,7 +309,7 @@
                 sign up phone number
                 sign up phone number
                 -->
-                <div data-tab-content="" id="phone-reg-form">
+                <div data-tab-content="" id="phone-reg-form" style="display: none;">
                     <form class="space-y-4">
                         <div>
                             <label class="block font-label-bold text-on-surface mb-1 text-sm">Phone Number</label>
