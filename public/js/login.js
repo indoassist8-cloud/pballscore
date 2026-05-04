@@ -16,7 +16,7 @@ let errorTimer; // Variable to keep track of the active timer
 
 const GO_SERVER_URL = "https://pball-score.web.app"; // need to change this if we link to a new domain
 
-
+/*
 window.recaptchaVerifier = null;
 
 const initRecaptcha = () => {
@@ -57,7 +57,7 @@ const initRecaptcha = () => {
 
 // Use window.onload to ensure EVERYTHING (including imports) is ready
 window.onload = initRecaptcha;
-
+*/
 
 function showMsg(msg, divId, isSuccess = false) {
     const msgDiv = document.getElementById(divId);
