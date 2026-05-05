@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
@@ -15,39 +16,53 @@ import (
 	"google.golang.org/api/option"
 )
 
+// UserSignupRequest is the JSON body expected from the frontend
 type UserSignupRequest struct {
-	Token    string `json:"token"`
-	Username string `json:"username"`
+	Token       string `json:"token"`
+	Username    string `json:"username"`
+	PhoneNumber string `json:"phone_number"`
 }
 
 var db *sql.DB
 var authClient *auth.Client
 
 func main() {
-	// 1. Initialize Database
+	// 1. Initialize MySQL connection
 	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true",
-		os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"))
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_NAME"),
+	)
 
 	var err error
 	db, err = sql.Open("mysql", dsn)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to open DB connection: %v", err)
 	}
+	defer db.Close()
 
-	// 2. Initialize Firebase Admin
-	// Ensure you upload your firebase-service-account.json to the server
+	// Verify DB is reachable at startup
+	if err = db.Ping(); err != nil {
+		log.Fatalf("Failed to ping DB: %v", err)
+	}
+	log.Println("Database connection established.")
+
+	// 2. Initialize Firebase Admin SDK
+	// firebase-service-account.json must be in the same directory as the binary
 	opt := option.WithCredentialsFile("firebase-service-account.json")
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
-		log.Fatalf("error initializing app: %v\n", err)
+		log.Fatalf("Error initializing Firebase app: %v", err)
 	}
 
 	authClient, err = app.Auth(context.Background())
 	if err != nil {
-		log.Fatalf("error getting Auth client: %v\n", err)
+		log.Fatalf("Error getting Firebase Auth client: %v", err)
 	}
+	log.Println("Firebase Admin SDK initialized.")
 
-	// 3. Routes
+	// 3. Register routes
 	http.HandleFunc("/api/signup", signupHandler)
 
 	port := os.Getenv("PORT")
@@ -55,44 +70,93 @@ func main() {
 		port = "8083"
 	}
 
-	fmt.Printf("PBall Backend running on port %s\n", port)
+	fmt.Printf("Backend running on port %s\n", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
 func signupHandler(w http.ResponseWriter, r *http.Request) {
-	// Handle CORS for Firebase Hosting
-	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("ALLOWED_ORIGIN"))
+	// --- CORS headers ---
+	allowedOrigin := os.Getenv("ALLOWED_ORIGIN")
+	w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
 	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
-	if r.Method == "OPTIONS" {
+	// Preflight request
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
+	// Only allow POST
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// --- Decode request body ---
 	var req UserSignupRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		http.Error(w, "Invalid JSON request body", http.StatusBadRequest)
 		return
 	}
 
-	// Verify the Firebase Token sent from Frontend
-	token, err := authClient.VerifyIDToken(context.Background(), req.Token)
+	// --- Basic input validation ---
+	req.Username = strings.TrimSpace(req.Username)
+	req.PhoneNumber = strings.TrimSpace(req.PhoneNumber)
+
+	if req.Token == "" {
+		http.Error(w, "Missing Firebase token", http.StatusBadRequest)
+		return
+	}
+	if req.Username == "" {
+		http.Error(w, "Username is required", http.StatusBadRequest)
+		return
+	}
+
+	// --- Verify Firebase ID token ---
+	decodedToken, err := authClient.VerifyIDToken(context.Background(), req.Token)
 	if err != nil {
-		http.Error(w, "Invalid Firebase Token", http.StatusUnauthorized)
+		log.Printf("Invalid Firebase token: %v", err)
+		http.Error(w, "Unauthorized: invalid Firebase token", http.StatusUnauthorized)
 		return
 	}
 
-	email := token.Claims["email"].(string)
+	// Extract UID and email from the verified token
+	firebaseUID := decodedToken.UID
 
-	// Save to MariaDB
-	query := "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)"
-	_, err = db.Exec(query, req.Username, email, "FIREBASE_AUTH") // password handled by Firebase
+	email, ok := decodedToken.Claims["email"].(string)
+	if !ok || email == "" {
+		http.Error(w, "Could not retrieve email from token", http.StatusBadRequest)
+		return
+	}
+
+	// --- Insert into MySQL ---
+	// Column order: firebase_uid, username, email, phone_number
+	query := `INSERT INTO users (firebase_uid, username, email, phone_number) VALUES (?, ?, ?, ?)`
+	_, err = db.ExecContext(context.Background(), query,
+		firebaseUID,
+		req.Username,
+		email,
+		req.PhoneNumber,
+	)
 	if err != nil {
-		http.Error(w, "Database error or User already exists", http.StatusInternalServerError)
-		log.Println("DB Error:", err)
+		log.Printf("DB insert error for UID %s: %v", firebaseUID, err)
+
+		// Detect duplicate entry (MySQL error 1062)
+		if strings.Contains(err.Error(), "Duplicate entry") {
+			http.Error(w, "User already exists", http.StatusConflict)
+			return
+		}
+
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
+	log.Printf("New user registered: uid=%s username=%s email=%s", firebaseUID, req.Username, email)
+
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully"})
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "User registered successfully",
+	})
 }
