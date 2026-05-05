@@ -19,7 +19,7 @@ import (
 // UserSignupRequest is the JSON body expected from the frontend
 type UserSignupRequest struct {
 	Token       string `json:"token"`
-	Username    string `json:"username"`
+	Fullname    string `json:"fullname"`
 	PhoneNumber string `json:"phone_number"`
 }
 
@@ -101,15 +101,15 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// --- Basic input validation ---
-	req.Username = strings.TrimSpace(req.Username)
+	req.Fullname = strings.TrimSpace(req.Fullname)
 	req.PhoneNumber = strings.TrimSpace(req.PhoneNumber)
 
 	if req.Token == "" {
 		http.Error(w, "Missing Firebase token", http.StatusBadRequest)
 		return
 	}
-	if req.Username == "" {
-		http.Error(w, "Username is required", http.StatusBadRequest)
+	if req.Fullname == "" {
+		http.Error(w, "Fullname is required", http.StatusBadRequest)
 		return
 	}
 
@@ -132,10 +132,10 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 
 	// --- Insert into MySQL ---
 	// Column order: firebase_uid, username, email, phone_number
-	query := `INSERT INTO users (firebase_uid, username, email, phone_number) VALUES (?, ?, ?, ?)`
+	query := `INSERT INTO users (firebase_uid, fullname, email, phone_number) VALUES (?, ?, ?, ?)`
 	_, err = db.ExecContext(context.Background(), query,
 		firebaseUID,
-		req.Username,
+		req.Fullname,
 		email,
 		req.PhoneNumber,
 	)
@@ -152,7 +152,7 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("New user registered: uid=%s username=%s email=%s", firebaseUID, req.Username, email)
+	log.Printf("New user registered: uid=%s fullname=%s email=%s", firebaseUID, req.Fullname, email)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
