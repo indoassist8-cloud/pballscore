@@ -269,6 +269,7 @@ async function handleGoogleAuth(msgDivId) {
                     const payload = {
                         token: idToken,            // Maps to "token" in Go
                         email: user.email,
+                        fullName: displayName,
                         phone_number: user.phoneNumber ?? "" // If null/undefined, use empty string
                     };
 

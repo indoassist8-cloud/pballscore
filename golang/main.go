@@ -20,6 +20,7 @@ import (
 type UserSignupRequest struct {
 	Token       string `json:"token"`
 	Fullname    string `json:"fullname"`
+	Email       string `json:"email"`
 	PhoneNumber string `json:"phone_number"`
 }
 
@@ -74,16 +75,33 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
-func signupHandler(w http.ResponseWriter, r *http.Request) {
-	// --- CORS headers ---
+func setCORSHeaders(w http.ResponseWriter, r *http.Request) bool {
 	allowedOrigin := os.Getenv("ALLOWED_ORIGIN")
-	w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
-	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	if allowedOrigin == "" {
+		allowedOrigin = "https://pball-score.web.app"
+	}
 
-	// Preflight request
+	origin := r.Header.Get("Origin")
+	if origin == allowedOrigin {
+		w.Header().Set("Access-Control-Allow-Origin", origin)
+	} else {
+		log.Printf("CORS blocked origin: %s (expected: %s)", origin, allowedOrigin)
+	}
+
+	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	w.Header().Set("Access-Control-Max-Age", "86400")
+
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusNoContent)
+		return true
+	}
+	return false
+}
+
+func signupHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("signupHandler called successfully")
+	if setCORSHeaders(w, r) {
 		return
 	}
 
@@ -103,7 +121,7 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 	// --- Basic input validation ---
 	req.Fullname = strings.TrimSpace(req.Fullname)
 	req.PhoneNumber = strings.TrimSpace(req.PhoneNumber)
-
+	log.Println("signupHandler :: Fullname and Phonenumber validation START")
 	if req.Token == "" {
 		http.Error(w, "Missing Firebase token", http.StatusBadRequest)
 		return
@@ -112,7 +130,8 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Fullname is required", http.StatusBadRequest)
 		return
 	}
-
+	log.Println("signupHandler :: Fullname and Phonenumber validation END")
+	log.Println("signupHandler :: verify Firebase ID Token START")
 	// --- Verify Firebase ID token ---
 	decodedToken, err := authClient.VerifyIDToken(context.Background(), req.Token)
 	if err != nil {
@@ -123,20 +142,15 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Extract UID and email from the verified token
 	firebaseUID := decodedToken.UID
-
-	email, ok := decodedToken.Claims["email"].(string)
-	if !ok || email == "" {
-		http.Error(w, "Could not retrieve email from token", http.StatusBadRequest)
-		return
-	}
-
+	log.Println("signupHandler :: verify Firebase ID Token END")
+	log.Println("signupHandler :: db INSERT START")
 	// --- Insert into MySQL ---
 	// Column order: firebase_uid, username, email, phone_number
 	query := `INSERT INTO users (firebase_uid, fullname, email, phone_number) VALUES (?, ?, ?, ?)`
 	_, err = db.ExecContext(context.Background(), query,
 		firebaseUID,
 		req.Fullname,
-		email,
+		req.Email,
 		req.PhoneNumber,
 	)
 	if err != nil {
@@ -151,8 +165,8 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-
-	log.Printf("New user registered: uid=%s fullname=%s email=%s", firebaseUID, req.Fullname, email)
+	log.Println("signupHandler :: db INSERT END")
+	log.Printf("New user registered: uid=%s fullname=%s email=%s", firebaseUID, req.Fullname, req.Email)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
