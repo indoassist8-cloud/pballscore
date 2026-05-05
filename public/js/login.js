@@ -293,7 +293,7 @@ async function handleGoogleAuth(msgDivId) {
             localStorage.setItem("loginTime", Date.now()); // add for session timeout
 
 
-            //remark dulu debugging window.location.href = 'index.html';
+            window.location.href = 'index.html';
 
             /*setTimeout(() => {
                 
@@ -372,15 +372,25 @@ signupForm.addEventListener('submit', (e) => {
             showMsg('Account created successfully! Please check your email for verification.', 'signup-msg', true);
 
             try {
+
+                // Get the ID Token from Firebase user object
+                const idToken = await user.getIdToken();
+                // 2. Prepare the payload with defaults
+                const payload = {
+                    token: idToken,            // Maps to "token" in Go
+                    email: user.email,
+                    fullName: displayName,
+                    phone_number: user.phoneNumber ?? "" // If null/undefined, use empty string
+                };
+
                 await fetch(`${GO_SERVER_URL}/api/signup`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        FirebaseUID: user.uid,
-                        Email: user.email,
-                        FullName: fullName
-                    }),
-                });
+                    body: JSON.stringify(payload),
+
+                })
+
+
                 console.log("Signup detected via msgDivId: Plan initialized in Go.");
             } catch (err) {
                 console.error('Go backend error:', err);
