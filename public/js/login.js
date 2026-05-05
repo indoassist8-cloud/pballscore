@@ -14,7 +14,7 @@ import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/12
 let errorTimer; // Variable to keep track of the active timer
 
 
-const GO_SERVER_URL = "https://pball-score.web.app"; // need to change this if we link to a new domain
+const GO_SERVER_URL = "https://api.mitrado.net"; // need to change this if we link to a new domain
 
 /*
 window.recaptchaVerifier = null;
@@ -108,21 +108,6 @@ function clearAllMessages() {
 }
 
 
-
-// --- 2. EMAIL/PASSWORD AUTHENTICATION ---
-/*
-export async function loginWithEmail(email, password) {
-    event.preventDefault();
-    clearAllMessages(); // Clear old errors
-    try {
-        await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = 'index.html';
-    } catch (error) {
-        console.error("Email Login Error:", error.message);
-        showMsg("Invalid email or password.");
-    }
-}
-*/
 
 const btnSignIn = document.getElementById('submitSignIn');
 btnSignIn.addEventListener('click', (event) => {
@@ -257,9 +242,8 @@ async function handleGoogleAuth(msgDivId) {
 
             // Extract name from Google profile
             const displayName = user.displayName || '';
-            const nameParts = displayName.split(' ');
-            const firstName = nameParts[0] || '';
-            const lastName = nameParts.slice(1).join(' ') || '';
+
+
 
             // Save user data to Firestore
             const userData = {
@@ -378,6 +362,21 @@ signupForm.addEventListener('submit', (e) => {
             await sendEmailVerification(user);
 
             showMsg('Account created successfully! Please check your email for verification.', 'signup-msg', true);
+
+            try {
+                await fetch(`${GO_SERVER_URL}/api/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        FirebaseUID: user.uid,
+                        Email: user.email,
+                        FullName: fullName
+                    }),
+                });
+                console.log("Signup detected via msgDivId: Plan initialized in Go.");
+            } catch (err) {
+                console.error('Go backend error:', err);
+            }
 
             // Clear form
             signupForm.reset();
