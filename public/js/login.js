@@ -285,7 +285,7 @@ async function handleGoogleAuth(msgDivId) {
             localStorage.setItem("loginTime", Date.now()); // add for session timeout
 
 
-            window.location.href = 'index.html';
+            //remark dulu debugging window.location.href = 'index.html';
 
             /*setTimeout(() => {
                 
