@@ -1,10 +1,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // CONFIG — adjust to match your backend
 // ─────────────────────────────────────────────────────────────────────────────
-const API_BASE = "http://localhost:8080";
+const API_BASE = "https://api.mitrado.net";
 
 // TODO: replace with real auth (e.g. read from Firebase JWT / localStorage)
-const CURRENT_USER_ID = 1;
+const CURRENT_USER_ID = localStorage.getItem('loggedInUserId');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // State
@@ -39,8 +39,8 @@ async function loadCommunities() {
     showLoading();
     try {
         const endpoint = activeTab === "my"
-            ? `/communities/user/${CURRENT_USER_ID}`
-            : "/communities";
+            ? `/api/communities/user/${CURRENT_USER_ID}`
+            : "/api/communities";
         communities = await apiFetch(endpoint);
         renderGrid(communities);
     } catch (e) {

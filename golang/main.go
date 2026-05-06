@@ -36,7 +36,7 @@ type Community struct {
 	ID          int       `json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
-	CreatorID   int       `json:"creator_id"`
+	CreatorID   string    `json:"creator_id"`
 	InviteCode  string    `json:"invite_code"`
 	CreatedAt   time.Time `json:"created_at"`
 	MemberCount int       `json:"member_count,omitempty"`
@@ -57,7 +57,7 @@ type Community struct {
 type CreateCommunityRequest struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	CreatorID   int    `json:"creator_id"`
+	CreatorID   string `json:"creator_id"`
 }
 
 // PUT /communities/{id}
@@ -78,7 +78,7 @@ type UpdateCommunityRequest struct {
 //	  "invite_code": "ABC123XY"
 //	}
 type JoinCommunityRequest struct {
-	UserID     int    `json:"user_id"`
+	UserID     string `json:"user_id"`
 	InviteCode string `json:"invite_code"`
 }
 
@@ -201,10 +201,12 @@ func main() {
 		log.Fatalf("Error getting Firebase Auth client: %v", err)
 	}
 	log.Println("Firebase Admin SDK initialized.")
-
+	r := mux.NewRouter()
 	// 3. Register routes
-	http.HandleFunc("/api/signup", signupHandler)
-	http.HandleFunc("/api/matches", CreateMatchHandler(db))
+	r.HandleFunc("/api/signup", signupHandler).Methods("POST", "OPTIONS")
+	r.HandleFunc("/api/matches", CreateMatchHandler(db)).Methods("POST", "OPTIONS")
+	// handler for community
+	RegisterCommunityRoutes(r, db)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -228,7 +230,7 @@ func setCORSHeaders(w http.ResponseWriter, r *http.Request) bool {
 		log.Printf("CORS blocked origin: %s (expected: %s)", origin, allowedOrigin)
 	}
 
-	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS") // ← added GET, PUT, DELETE
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 	w.Header().Set("Access-Control-Max-Age", "86400")
 
@@ -237,6 +239,15 @@ func setCORSHeaders(w http.ResponseWriter, r *http.Request) bool {
 		return true
 	}
 	return false
+}
+
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if setCORSHeaders(w, r) {
+			return // OPTIONS preflight — stop here
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 func signupHandler(w http.ResponseWriter, r *http.Request) {
@@ -684,11 +695,7 @@ func GetAllCommunities(db *sql.DB) http.HandlerFunc {
 func GetUserCommunities(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		userID, err := strconv.Atoi(vars["user_id"])
-		if err != nil {
-			writeError(w, http.StatusBadRequest, "invalid user_id")
-			return
-		}
+		userID := vars["user_id"]
 
 		rows, err := db.Query(`
 			SELECT c.id, c.name, c.description, c.creator_id, c.invite_code, c.created_at,
@@ -740,7 +747,7 @@ func CreateCommunity(db *sql.DB) http.HandlerFunc {
 			writeError(w, http.StatusBadRequest, "name is required")
 			return
 		}
-		if req.CreatorID == 0 {
+		if req.CreatorID == "" {
 			writeError(w, http.StatusBadRequest, "creator_id is required")
 			return
 		}
@@ -895,7 +902,7 @@ func JoinCommunity(db *sql.DB) http.HandlerFunc {
 			writeError(w, http.StatusBadRequest, "invalid JSON body")
 			return
 		}
-		if req.UserID == 0 || req.InviteCode == "" {
+		if req.UserID == "" || req.InviteCode == "" {
 			writeError(w, http.StatusBadRequest, "user_id and invite_code are required")
 			return
 		}
@@ -937,8 +944,8 @@ func LeaveCommunity(db *sql.DB) http.HandlerFunc {
 			writeError(w, http.StatusBadRequest, "invalid community id")
 			return
 		}
-		userID, err := strconv.Atoi(r.URL.Query().Get("user_id"))
-		if err != nil || userID == 0 {
+		userID := r.URL.Query().Get("user_id")
+		if err != nil || userID == "" {
 			writeError(w, http.StatusBadRequest, "user_id query param is required")
 			return
 		}
@@ -963,13 +970,12 @@ func LeaveCommunity(db *sql.DB) http.HandlerFunc {
 // ─────────────────────────────────────────
 // Route registration  (call this in main.go)
 // ─────────────────────────────────────────
-//
-// func RegisterCommunityRoutes(r *mux.Router, db *sql.DB) {
-//     r.HandleFunc("/communities",                  GetAllCommunities(db)).Methods("GET")
-//     r.HandleFunc("/communities/user/{user_id}",   GetUserCommunities(db)).Methods("GET")
-//     r.HandleFunc("/communities",                  CreateCommunity(db)).Methods("POST")
-//     r.HandleFunc("/communities/{id}",             UpdateCommunity(db)).Methods("PUT")
-//     r.HandleFunc("/communities/{id}",             DeleteCommunity(db)).Methods("DELETE")
-//     r.HandleFunc("/communities/join",             JoinCommunity(db)).Methods("POST")
-//     r.HandleFunc("/communities/{id}/leave",       LeaveCommunity(db)).Methods("DELETE")
-// }
+func RegisterCommunityRoutes(r *mux.Router, db *sql.DB) {
+	r.HandleFunc("/api/communities", GetAllCommunities(db)).Methods("GET", "OPTIONS")
+	r.HandleFunc("/api/communities/user/{user_id}", GetUserCommunities(db)).Methods("GET", "OPTIONS")
+	r.HandleFunc("/api/communities", CreateCommunity(db)).Methods("POST", "OPTIONS")
+	r.HandleFunc("/api/communities/{id}", UpdateCommunity(db)).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/api/communities/{id}", DeleteCommunity(db)).Methods("DELETE", "OPTIONS")
+	r.HandleFunc("/api/communities/join", JoinCommunity(db)).Methods("POST", "OPTIONS")
+	r.HandleFunc("/api/communities/{id}/leave", LeaveCommunity(db)).Methods("DELETE", "OPTIONS")
+}
