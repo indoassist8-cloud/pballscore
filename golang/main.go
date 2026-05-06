@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
@@ -16,6 +17,7 @@ import (
 	"firebase.google.com/go/v4/auth"
 	"github.com/go-sql-driver/mysql"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
 	"google.golang.org/api/option"
 )
 
@@ -29,6 +31,56 @@ type UserSignupRequest struct {
 
 var db *sql.DB
 var authClient *auth.Client
+
+type Community struct {
+	ID          int       `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	CreatorID   int       `json:"creator_id"`
+	InviteCode  string    `json:"invite_code"`
+	CreatedAt   time.Time `json:"created_at"`
+	MemberCount int       `json:"member_count,omitempty"`
+	UserRole    string    `json:"user_role,omitempty"` // populated when fetching user's communities
+}
+
+// ─────────────────────────────────────────
+// Request Payloads (what the frontend sends)
+// ─────────────────────────────────────────
+
+// POST /communities
+//
+//	{
+//	  "name": "Downtown Picklers",
+//	  "description": "Weekly games at downtown courts",
+//	  "creator_id": 42
+//	}
+type CreateCommunityRequest struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	CreatorID   int    `json:"creator_id"`
+}
+
+// PUT /communities/{id}
+//
+//	{
+//	  "name": "Updated Name",
+//	  "description": "Updated description"
+//	}
+type UpdateCommunityRequest struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+// POST /communities/join
+//
+//	{
+//	  "user_id": 42,
+//	  "invite_code": "ABC123XY"
+//	}
+type JoinCommunityRequest struct {
+	UserID     int    `json:"user_id"`
+	InviteCode string `json:"invite_code"`
+}
 
 // ─────────────────────────────────────────────
 // REQUEST / RESPONSE STRUCTS
@@ -570,3 +622,354 @@ func ListUserMatchesHandler(db *sql.DB) http.HandlerFunc {
 		writeJSON(w, http.StatusOK, matches)
 	}
 }
+
+/////////
+//// 6 May 2026 - add communities helper
+/////////
+
+// ─────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────
+
+func generateInviteCode(n int) string {
+	const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+	rand.Seed(time.Now().UnixNano())
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
+}
+
+// ─────────────────────────────────────────
+// Handlers
+// ─────────────────────────────────────────
+
+// GET /communities
+// Returns all communities with member count.
+func GetAllCommunities(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		rows, err := db.Query(`
+			SELECT c.id, c.name, c.description, c.creator_id, c.invite_code, c.created_at,
+			       COUNT(cm.user_id) AS member_count
+			FROM communities c
+			LEFT JOIN community_members cm ON c.id = cm.community_id
+			GROUP BY c.id
+			ORDER BY c.created_at DESC
+		`)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "failed to query communities")
+			return
+		}
+		defer rows.Close()
+
+		var communities []Community
+		for rows.Next() {
+			var c Community
+			if err := rows.Scan(&c.ID, &c.Name, &c.Description, &c.CreatorID, &c.InviteCode, &c.CreatedAt, &c.MemberCount); err != nil {
+				writeError(w, http.StatusInternalServerError, "failed to scan row")
+				return
+			}
+			communities = append(communities, c)
+		}
+		if communities == nil {
+			communities = []Community{}
+		}
+		writeJSON(w, http.StatusOK, communities)
+	}
+}
+
+// GET /communities/user/{user_id}
+// Returns all communities the user belongs to, with their role.
+func GetUserCommunities(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		userID, err := strconv.Atoi(vars["user_id"])
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "invalid user_id")
+			return
+		}
+
+		rows, err := db.Query(`
+			SELECT c.id, c.name, c.description, c.creator_id, c.invite_code, c.created_at,
+			       COUNT(cm2.user_id) AS member_count,
+			       cm.role AS user_role
+			FROM communities c
+			JOIN community_members cm  ON c.id = cm.community_id AND cm.user_id = ?
+			LEFT JOIN community_members cm2 ON c.id = cm2.community_id
+			GROUP BY c.id, cm.role
+			ORDER BY c.created_at DESC
+		`, userID)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "failed to query user communities")
+			return
+		}
+		defer rows.Close()
+
+		var communities []Community
+		for rows.Next() {
+			var c Community
+			if err := rows.Scan(&c.ID, &c.Name, &c.Description, &c.CreatorID, &c.InviteCode, &c.CreatedAt, &c.MemberCount, &c.UserRole); err != nil {
+				writeError(w, http.StatusInternalServerError, "failed to scan row")
+				return
+			}
+			communities = append(communities, c)
+		}
+		if communities == nil {
+			communities = []Community{}
+		}
+		writeJSON(w, http.StatusOK, communities)
+	}
+}
+
+// POST /communities
+// Creates a new community and auto-joins the creator as admin.
+//
+// Payload:
+//
+//	{ "name": "Downtown Picklers", "description": "...", "creator_id": 42 }
+func CreateCommunity(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req CreateCommunityRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			writeError(w, http.StatusBadRequest, "invalid JSON body")
+			return
+		}
+		req.Name = strings.TrimSpace(req.Name)
+		if req.Name == "" {
+			writeError(w, http.StatusBadRequest, "name is required")
+			return
+		}
+		if req.CreatorID == 0 {
+			writeError(w, http.StatusBadRequest, "creator_id is required")
+			return
+		}
+
+		inviteCode := generateInviteCode(8)
+
+		tx, err := db.Begin()
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "failed to begin transaction")
+			return
+		}
+
+		res, err := tx.Exec(
+			`INSERT INTO communities (name, description, creator_id, invite_code) VALUES (?, ?, ?, ?)`,
+			req.Name, req.Description, req.CreatorID, inviteCode,
+		)
+		if err != nil {
+			tx.Rollback()
+			writeError(w, http.StatusInternalServerError, "failed to create community")
+			return
+		}
+
+		communityID, _ := res.LastInsertId()
+
+		// Auto-join creator as admin
+		_, err = tx.Exec(
+			`INSERT INTO community_members (user_id, community_id, role) VALUES (?, ?, 'admin')`,
+			req.CreatorID, communityID,
+		)
+		if err != nil {
+			tx.Rollback()
+			writeError(w, http.StatusInternalServerError, "failed to add creator as member")
+			return
+		}
+
+		if err := tx.Commit(); err != nil {
+			writeError(w, http.StatusInternalServerError, "failed to commit transaction")
+			return
+		}
+
+		community := Community{
+			ID:          int(communityID),
+			Name:        req.Name,
+			Description: req.Description,
+			CreatorID:   req.CreatorID,
+			InviteCode:  inviteCode,
+			CreatedAt:   time.Now(),
+			MemberCount: 1,
+			UserRole:    "admin",
+		}
+		writeJSON(w, http.StatusCreated, community)
+	}
+}
+
+// PUT /communities/{id}
+// Updates name / description. Only the creator or an admin may do this.
+//
+// Payload:
+//
+//	{ "name": "New Name", "description": "New description" }
+func UpdateCommunity(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "invalid community id")
+			return
+		}
+
+		var req UpdateCommunityRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			writeError(w, http.StatusBadRequest, "invalid JSON body")
+			return
+		}
+		req.Name = strings.TrimSpace(req.Name)
+		if req.Name == "" {
+			writeError(w, http.StatusBadRequest, "name is required")
+			return
+		}
+
+		result, err := db.Exec(
+			`UPDATE communities SET name = ?, description = ? WHERE id = ?`,
+			req.Name, req.Description, id,
+		)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "failed to update community")
+			return
+		}
+		rows, _ := result.RowsAffected()
+		if rows == 0 {
+			writeError(w, http.StatusNotFound, "community not found")
+			return
+		}
+
+		writeJSON(w, http.StatusOK, map[string]string{"message": "community updated"})
+	}
+}
+
+// DELETE /communities/{id}
+// Deletes a community. Only the creator should call this (enforce on your auth middleware).
+func DeleteCommunity(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "invalid community id")
+			return
+		}
+
+		tx, err := db.Begin()
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "failed to begin transaction")
+			return
+		}
+
+		// Remove all members first (foreign key constraint)
+		if _, err := tx.Exec(`DELETE FROM community_members WHERE community_id = ?`, id); err != nil {
+			tx.Rollback()
+			writeError(w, http.StatusInternalServerError, "failed to remove members")
+			return
+		}
+
+		result, err := tx.Exec(`DELETE FROM communities WHERE id = ?`, id)
+		if err != nil {
+			tx.Rollback()
+			writeError(w, http.StatusInternalServerError, "failed to delete community")
+			return
+		}
+
+		rows, _ := result.RowsAffected()
+		if rows == 0 {
+			tx.Rollback()
+			writeError(w, http.StatusNotFound, "community not found")
+			return
+		}
+
+		tx.Commit()
+		writeJSON(w, http.StatusOK, map[string]string{"message": "community deleted"})
+	}
+}
+
+// POST /communities/join
+// Lets a user join a community using an invite code.
+//
+// Payload:
+//
+//	{ "user_id": 42, "invite_code": "ABC123XY" }
+func JoinCommunity(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req JoinCommunityRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			writeError(w, http.StatusBadRequest, "invalid JSON body")
+			return
+		}
+		if req.UserID == 0 || req.InviteCode == "" {
+			writeError(w, http.StatusBadRequest, "user_id and invite_code are required")
+			return
+		}
+
+		var communityID int
+		err := db.QueryRow(`SELECT id FROM communities WHERE invite_code = ?`, req.InviteCode).Scan(&communityID)
+		if err == sql.ErrNoRows {
+			writeError(w, http.StatusNotFound, "invalid invite code")
+			return
+		} else if err != nil {
+			writeError(w, http.StatusInternalServerError, "database error")
+			return
+		}
+
+		_, err = db.Exec(
+			`INSERT IGNORE INTO community_members (user_id, community_id, role) VALUES (?, ?, 'member')`,
+			req.UserID, communityID,
+		)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "failed to join community")
+			return
+		}
+
+		writeJSON(w, http.StatusOK, map[string]any{
+			"message":      "joined community",
+			"community_id": communityID,
+		})
+	}
+}
+
+// DELETE /communities/{id}/leave
+// Lets a user leave a community.
+// Pass user_id as a query param: /communities/5/leave?user_id=42
+func LeaveCommunity(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		communityID, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "invalid community id")
+			return
+		}
+		userID, err := strconv.Atoi(r.URL.Query().Get("user_id"))
+		if err != nil || userID == 0 {
+			writeError(w, http.StatusBadRequest, "user_id query param is required")
+			return
+		}
+
+		result, err := db.Exec(
+			`DELETE FROM community_members WHERE user_id = ? AND community_id = ?`,
+			userID, communityID,
+		)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "failed to leave community")
+			return
+		}
+		rows, _ := result.RowsAffected()
+		if rows == 0 {
+			writeError(w, http.StatusNotFound, "membership not found")
+			return
+		}
+		writeJSON(w, http.StatusOK, map[string]string{"message": "left community"})
+	}
+}
+
+// ─────────────────────────────────────────
+// Route registration  (call this in main.go)
+// ─────────────────────────────────────────
+//
+// func RegisterCommunityRoutes(r *mux.Router, db *sql.DB) {
+//     r.HandleFunc("/communities",                  GetAllCommunities(db)).Methods("GET")
+//     r.HandleFunc("/communities/user/{user_id}",   GetUserCommunities(db)).Methods("GET")
+//     r.HandleFunc("/communities",                  CreateCommunity(db)).Methods("POST")
+//     r.HandleFunc("/communities/{id}",             UpdateCommunity(db)).Methods("PUT")
+//     r.HandleFunc("/communities/{id}",             DeleteCommunity(db)).Methods("DELETE")
+//     r.HandleFunc("/communities/join",             JoinCommunity(db)).Methods("POST")
+//     r.HandleFunc("/communities/{id}/leave",       LeaveCommunity(db)).Methods("DELETE")
+// }

@@ -5,6 +5,7 @@ go 1.25.0
 require (
 	firebase.google.com/go/v4 v4.19.0
 	github.com/go-sql-driver/mysql v1.10.0
+	github.com/gorilla/mux v1.8.1
 	google.golang.org/api v0.277.0
 )
 
