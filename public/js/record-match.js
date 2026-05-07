@@ -47,6 +47,7 @@ function clearError() {
 }
 
 /** Build one player-id input row */
+/*
 function playerRow(team, index) {
     const label = state.isDoubles
         ? `Player ${index + 1}`
@@ -65,6 +66,7 @@ function playerRow(team, index) {
     />`;
     return div;
 }
+*/
 
 /** Re-render both team player rows based on current format */
 function playerRow(team, index) {
