@@ -67,6 +67,70 @@ function playerRow(team, index) {
 }
 
 /** Re-render both team player rows based on current format */
+function playerRow(team, index) {
+    const div = document.createElement("div");
+    div.className = "player-slot flex items-center gap-2 mb-2";
+
+    div.innerHTML = `
+        <input type="text" placeholder="Guest name" data-team="${team}" data-index="${index}"
+            class="player-input flex-1 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400 text-sm" />
+        <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-slate-100 text-slate-500 shrink-0">Guest</span>
+        <button type="button"
+            class="toggle-type-btn text-[11px] font-semibold px-2 py-1 rounded-lg border border-slate-200 text-slate-400 hover:border-blue-300 hover:text-blue-500 transition-all shrink-0">
+            Member?
+        </button>
+    `;
+
+    div.querySelector(".toggle-type-btn").addEventListener("click", () => {
+        togglePlayerType(div, team, index);
+    });
+
+    return div;
+}
+
+function togglePlayerType(slot, team, index) {
+    const badge = slot.querySelector("span");
+    const isGuest = badge.textContent === "Guest";
+    const btn = slot.querySelector(".toggle-type-btn");
+
+    if (isGuest) {
+        // switch to Member — replace input with select
+        const input = slot.querySelector("input");
+        const select = document.createElement("select");
+        select.dataset.team = team;
+        select.dataset.index = index;
+        select.className = "player-select flex-1 px-3 py-2 rounded-xl border border-blue-300 bg-blue-50 text-blue-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400";
+        select.innerHTML = `<option disabled selected>Search member...</option>`;
+        // TODO: populate with your members from API
+        // e.g. members.forEach(m => select.innerHTML += `<option value="${m.id}">${m.name}</option>`)
+        select.addEventListener("change", (e) => {
+            state.players[team][index] = e.target.value; // Firebase UID
+        });
+        input.replaceWith(select);
+        badge.textContent = "Member";
+        badge.className = "text-[10px] font-bold px-2 py-1 rounded-full bg-blue-50 text-blue-600 shrink-0";
+        btn.textContent = "Guest?";
+        btn.className = "toggle-type-btn text-[11px] font-semibold px-2 py-1 rounded-lg border border-blue-200 text-blue-400 hover:border-slate-300 hover:text-slate-500 transition-all shrink-0";
+    } else {
+        // switch back to Guest — replace select with input
+        const select = slot.querySelector("select");
+        const input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "Guest name";
+        input.dataset.team = team;
+        input.dataset.index = index;
+        input.className = "player-input flex-1 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400 text-sm";
+        input.addEventListener("input", (e) => {
+            state.players[team][index] = e.target.value || null;
+        });
+        select.replaceWith(input);
+        badge.textContent = "Guest";
+        badge.className = "text-[10px] font-bold px-2 py-1 rounded-full bg-slate-100 text-slate-500 shrink-0";
+        btn.textContent = "Member?";
+        btn.className = "toggle-type-btn text-[11px] font-semibold px-2 py-1 rounded-lg border border-slate-200 text-slate-400 hover:border-blue-300 hover:text-blue-500 transition-all shrink-0";
+    }
+}
+
 function renderPlayers() {
     teamAPlayers.innerHTML = "";
     teamBPlayers.innerHTML = "";
@@ -77,12 +141,12 @@ function renderPlayers() {
         teamBPlayers.appendChild(playerRow("B", i));
     });
 
-    // Sync input changes back to state
+    // Sync guest name input changes back to state
     document.querySelectorAll(".player-input").forEach((inp) => {
         inp.addEventListener("input", (e) => {
             const t = e.target.dataset.team;
             const idx = Number(e.target.dataset.index);
-            state.players[t][idx] = e.target.value ? Number(e.target.value) : null;
+            state.players[t][idx] = e.target.value || null;
         });
     });
 }
