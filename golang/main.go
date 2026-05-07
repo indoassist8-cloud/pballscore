@@ -202,6 +202,11 @@ func main() {
 	}
 	log.Println("Firebase Admin SDK initialized.")
 	r := mux.NewRouter()
+
+	r.Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		setCORSHeaders(w, r)
+	})
+
 	// 3. Register routes
 	r.HandleFunc("/api/signup", signupHandler).Methods("POST", "OPTIONS")
 	r.HandleFunc("/api/matches", CreateMatchHandler(db)).Methods("POST", "OPTIONS")
@@ -214,7 +219,7 @@ func main() {
 	}
 
 	fmt.Printf("Backend running on port %s\n", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, corsMiddleware(r)))
 }
 
 func setCORSHeaders(w http.ResponseWriter, r *http.Request) bool {
@@ -243,9 +248,16 @@ func setCORSHeaders(w http.ResponseWriter, r *http.Request) bool {
 
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if setCORSHeaders(w, r) {
-			return // OPTIONS preflight — stop here
+		w.Header().Set("Access-Control-Allow-Origin", "https://pball-score.web.app")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Max-Age", "86400")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
 		}
+
 		next.ServeHTTP(w, r)
 	})
 }
