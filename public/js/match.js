@@ -212,6 +212,7 @@ async function loadMatches(filter = "all") {
 
         // For each match summary we need full detail (sets + players)
         // Fetch full detail in parallel
+        /*ori from claude - remark to use the new func shared by gemini 
         matches = await Promise.all(
             matches.map(async (summary) => {
                 const detailRes = await fetch(`${API_BASE}/matches/${summary.match_id}`, {
@@ -221,6 +222,7 @@ async function loadMatches(filter = "all") {
                 return await detailRes.json();
             })
         );
+        */
 
         // Apply filter tab
         if (filter === "wins") {

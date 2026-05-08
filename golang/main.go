@@ -164,6 +164,7 @@ type GetMatchResponse struct {
 	MatchDate   time.Time               `json:"match_date"`
 	Teams       map[string][]TeamMember `json:"teams"`  // "A" → [...], "B" → [...]
 	Winner      string                  `json:"winner"` // "A" or "B"
+	Sets        []SetScore              `json:"sets"`
 }
 
 // TeamMember is one row from match_results joined with users.
@@ -220,6 +221,8 @@ func main() {
 	// 3. Register routes
 	r.HandleFunc("/api/signup", signupHandler).Methods("POST", "OPTIONS")
 	r.HandleFunc("/api/matches", CreateMatchHandler(db)).Methods("POST", "OPTIONS")
+	// Add this line with your other r.HandleFunc lines
+	r.HandleFunc("/api/matches", ListUserMatchesHandler(db)).Methods("GET", "OPTIONS")
 	// handler for community
 	RegisterCommunityRoutes(r, db)
 
@@ -648,6 +651,71 @@ func GetMatchHandler(db *sql.DB) http.HandlerFunc {
 //	http.HandleFunc("/matches", func(w http.ResponseWriter, r *http.Request) {
 //	    if r.Method == http.MethodGet { ListUserMatchesHandler(db)(w, r) } else { CreateMatchHandler(db)(w, r) }
 //	})
+
+/*
+backup ori from claude
+
+	func ListUserMatchesHandler(db *sql.DB) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			userID := r.URL.Query().Get("user_id")
+			if userID == "" {
+				writeError(w, http.StatusBadRequest, "user_id query param is required")
+				return
+			}
+
+			limit := 20
+			if l := r.URL.Query().Get("limit"); l != "" {
+				if parsed, err2 := strconv.Atoi(l); err2 == nil && parsed > 0 {
+					limit = parsed
+				}
+			}
+
+			rows, err := db.Query(
+				`SELECT m.id, st.name, m.location, m.match_date,
+				        mr.team_identifier, mr.score, mr.is_winner
+				   FROM match_results mr
+				   JOIN matches m     ON m.id  = mr.match_id
+				   JOIN sport_types st ON st.id = m.sport_type_id
+				  WHERE mr.user_id = ?
+				  ORDER BY m.match_date DESC
+				  LIMIT ?`,
+				userID, limit,
+			)
+			if err != nil {
+				log.Printf("ListUserMatches query: %v", err)
+				writeError(w, http.StatusInternalServerError, "database error")
+				return
+			}
+			defer rows.Close()
+
+			type MatchSummary struct {
+				MatchID   int       `json:"match_id"`
+				SportType string    `json:"sport_type"`
+				Location  string    `json:"location"`
+				MatchDate time.Time `json:"match_date"`
+				Team      string    `json:"team"`
+				Score     int       `json:"score"`
+				IsWinner  bool      `json:"is_winner"`
+			}
+
+			var matches []MatchSummary
+			for rows.Next() {
+				var ms MatchSummary
+				if err = rows.Scan(&ms.MatchID, &ms.SportType, &ms.Location, &ms.MatchDate, &ms.Team, &ms.Score, &ms.IsWinner); err != nil {
+					log.Printf("scan match summary: %v", err)
+					writeError(w, http.StatusInternalServerError, "database error")
+					return
+				}
+				matches = append(matches, ms)
+			}
+			if matches == nil {
+				matches = []MatchSummary{} // return [] not null
+			}
+
+			writeJSON(w, http.StatusOK, matches)
+		}
+	}
+*/
 func ListUserMatchesHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userID := r.URL.Query().Get("user_id")
@@ -663,15 +731,16 @@ func ListUserMatchesHandler(db *sql.DB) http.HandlerFunc {
 			}
 		}
 
+		// 1. Fetch match summaries
 		rows, err := db.Query(
 			`SELECT m.id, st.name, m.location, m.match_date,
-			        mr.team_identifier, mr.score, mr.is_winner
-			   FROM match_results mr
-			   JOIN matches m     ON m.id  = mr.match_id
-			   JOIN sport_types st ON st.id = m.sport_type_id
-			  WHERE mr.user_id = ?
-			  ORDER BY m.match_date DESC
-			  LIMIT ?`,
+                    mr.team_identifier, mr.score, mr.is_winner
+               FROM match_results mr
+               JOIN matches m     ON m.id  = mr.match_id
+               JOIN sport_types st ON st.id = m.sport_type_id
+              WHERE mr.user_id = ?
+              ORDER BY m.match_date DESC
+              LIMIT ?`,
 			userID, limit,
 		)
 		if err != nil {
@@ -682,16 +751,19 @@ func ListUserMatchesHandler(db *sql.DB) http.HandlerFunc {
 		defer rows.Close()
 
 		type MatchSummary struct {
-			MatchID   int       `json:"match_id"`
-			SportType string    `json:"sport_type"`
-			Location  string    `json:"location"`
-			MatchDate time.Time `json:"match_date"`
-			Team      string    `json:"team"`
-			Score     int       `json:"score"`
-			IsWinner  bool      `json:"is_winner"`
+			MatchID   int        `json:"match_id"`
+			SportType string     `json:"sport_type"`
+			Location  string     `json:"location"`
+			MatchDate time.Time  `json:"match_date"`
+			Team      string     `json:"team"`
+			Score     int        `json:"score"`
+			IsWinner  bool       `json:"is_winner"`
+			Sets      []SetScore `json:"sets"`
 		}
 
 		var matches []MatchSummary
+		var matchIDs []interface{} // Needs to be interface{} to be passed directly to db.Query
+
 		for rows.Next() {
 			var ms MatchSummary
 			if err = rows.Scan(&ms.MatchID, &ms.SportType, &ms.Location, &ms.MatchDate, &ms.Team, &ms.Score, &ms.IsWinner); err != nil {
@@ -699,10 +771,57 @@ func ListUserMatchesHandler(db *sql.DB) http.HandlerFunc {
 				writeError(w, http.StatusInternalServerError, "database error")
 				return
 			}
+			ms.Sets = []SetScore{} // Initialize to empty slice so JSON is [] instead of null
 			matches = append(matches, ms)
+			matchIDs = append(matchIDs, ms.MatchID)
 		}
 		if matches == nil {
-			matches = []MatchSummary{} // return [] not null
+			matches = []MatchSummary{}
+		}
+
+		// 2. Fetch set details only for the fetched matches
+		if len(matchIDs) > 0 {
+			// Build the dynamic SQL placeholders: (?, ?, ?, ...)
+			placeholders := make([]string, len(matchIDs))
+			for i := range matchIDs {
+				placeholders[i] = "?"
+			}
+
+			// Construct query: SELECT ... WHERE match_id IN (?, ?, ?) ORDER BY set_number
+			query := fmt.Sprintf(
+				`SELECT match_id, set_number, score_team_a, score_team_b 
+                 FROM match_sets 
+                 WHERE match_id IN (%s) 
+                 ORDER BY set_number`,
+				strings.Join(placeholders, ","),
+			)
+
+			// Pass the constructed query and spread the matchIDs slice as arguments
+			setRows, err := db.Query(query, matchIDs...)
+			if err != nil {
+				log.Printf("query match sets: %v", err)
+				writeError(w, http.StatusInternalServerError, "database error")
+				return
+			}
+			defer setRows.Close()
+
+			// Map each set to its respective match
+			for setRows.Next() {
+				var mid int
+				var s SetScore
+				if err = setRows.Scan(&mid, &s.SetNumber, &s.ScoreTeamA, &s.ScoreTeamB); err != nil {
+					log.Printf("scan match set: %v", err)
+					writeError(w, http.StatusInternalServerError, "database error")
+					return
+				}
+
+				// Find the match this set belongs to and append it
+				for i := range matches {
+					if matches[i].MatchID == mid {
+						matches[i].Sets = append(matches[i].Sets, s)
+					}
+				}
+			}
 		}
 
 		writeJSON(w, http.StatusOK, matches)
