@@ -1,329 +1,219 @@
 /**
  * record-match.js
- * Handles the "Record New Match" modal and submits to POST /matches
- *
- * Save this file as:  js/record-match.js
- * Then add to index.html (bottom, after the existing script tag):
- *   <script type="module" src="js/record-match.js"></script>
+ * Handles the "Record New Match" modal and submits to POST /api/matches
  */
 
-// ─── Config ───────────────────────────────────────────────────────────────────
-const API_BASE = "https://api.mitrado.net"; // change to your Go server URL
+const API_BASE = "https://api.mitrado.net";
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const state = {
-    sportTypeId: 1,
-    isDoubles: false,
-    scores: { A: 0, B: 0 },
-    // Each slot holds a numeric user_id (or null if not filled yet)
+    sportTypeId: 1, // Default 1 (Pickleball)
+    isDoubles: true,
+    location: "",
+    // Each player is { type: 'guest'|'member', value: string|null }
     players: {
-        A: [null, null], // [player1, player2]  — player2 only used in doubles
-        B: [null, null],
+        A: [{ type: 'member', value: null }, { type: 'member', value: null }],
+        B: [{ type: 'guest', value: null }, { type: 'guest', value: null }],
     },
+    sets: [
+        { set_number: 1, score_team_a: 0, score_team_b: 0 }
+    ]
 };
 
-// ─── DOM refs ─────────────────────────────────────────────────────────────────
-const modal = document.getElementById("matchModal");
-const backdrop = document.getElementById("modalBackdrop");
-const closeBtn = document.getElementById("closeModalBtn");
-const openBtn = document.getElementById("recordMatchBtn");
-const submitBtn = document.getElementById("submitMatchBtn");
-const errorEl = document.getElementById("matchError");
-const scoreAEl = document.getElementById("scoreA");
-const scoreBEl = document.getElementById("scoreB");
-const teamAPlayers = document.getElementById("teamAPlayers");
-const teamBPlayers = document.getElementById("teamBPlayers");
-const fmtSingles = document.getElementById("fmtSingles");
-const fmtDoubles = document.getElementById("fmtDoubles");
+// ─── DOM References ───────────────────────────────────────────────────────────
+const modal = document.querySelector(".fixed.inset-0.z-\\[60\\]"); // The outer div
+const playerContainers = {
+    A: document.querySelector(".bg-slate-900.p-5:nth-of-type(1) .space-y-4"),
+    B: document.querySelector(".bg-slate-900.p-5:nth-of-type(2) .space-y-4"),
+};
+const setListContainer = document.querySelector(".space-y-3:has(.w-10)");
+const addSetBtn = document.querySelector("button:has(.group-hover\\:rotate-90)");
+const saveBtn = document.querySelector("button:has(span[data-icon='check_circle'])");
+const discardBtn = document.querySelector("button:contains('Discard')");
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-function showError(msg) {
-    errorEl.textContent = msg;
-    errorEl.classList.remove("hidden");
-}
-function clearError() {
-    errorEl.classList.add("hidden");
-    errorEl.textContent = "";
+// ─── Initialization ──────────────────────────────────────────────────────────
+function init() {
+    renderPlayers();
+    renderSets();
+    setupEventListeners();
 }
 
-/** Build one player-id input row */
-/*
-function playerRow(team, index) {
-    const label = state.isDoubles
-        ? `Player ${index + 1}`
-        : (team === "A" ? "You (Player)" : "Opponent");
-
-    const div = document.createElement("div");
-    div.className = "flex items-center gap-2";
-    div.innerHTML = `
-    <span class="text-xs text-slate-500 w-24 shrink-0">${label}</span>
-    <input
-      type="number" min="1" placeholder="User ID"
-      data-team="${team}" data-index="${index}"
-      class="player-input flex-1 px-3 py-1.5 rounded-lg border border-slate-200
-             focus:outline-none focus:ring-2 focus:ring-orange-400 text-sm"
-      value="${state.players[team][index] ?? ""}"
-    />`;
-    return div;
-}
-*/
-
-/** Re-render both team player rows based on current format */
-function playerRow(team, index) {
-    const div = document.createElement("div");
-    div.className = "player-slot flex items-center gap-2 mb-2";
-
-    div.innerHTML = `
-        <input type="text" placeholder="Guest name" data-team="${team}" data-index="${index}"
-            class="player-input flex-1 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400 text-sm" />
-        <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-slate-100 text-slate-500 shrink-0">Guest</span>
-        <button type="button"
-            class="toggle-type-btn text-[11px] font-semibold px-2 py-1 rounded-lg border border-slate-200 text-slate-400 hover:border-blue-300 hover:text-blue-500 transition-all shrink-0">
-            Member?
-        </button>
-    `;
-
-    div.querySelector(".toggle-type-btn").addEventListener("click", () => {
-        togglePlayerType(div, team, index);
-    });
-
-    return div;
-}
-
-function togglePlayerType(slot, team, index) {
-    const badge = slot.querySelector("span");
-    const isGuest = badge.textContent === "Guest";
-    const btn = slot.querySelector(".toggle-type-btn");
-
-    if (isGuest) {
-        // switch to Member — replace input with select
-        const input = slot.querySelector("input");
-        const select = document.createElement("select");
-        select.dataset.team = team;
-        select.dataset.index = index;
-        select.className = "player-select flex-1 px-3 py-2 rounded-xl border border-blue-300 bg-blue-50 text-blue-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400";
-        select.innerHTML = `<option disabled selected>Search member...</option>`;
-        // TODO: populate with your members from API
-        // e.g. members.forEach(m => select.innerHTML += `<option value="${m.id}">${m.name}</option>`)
-        select.addEventListener("change", (e) => {
-            state.players[team][index] = e.target.value; // Firebase UID
-        });
-        input.replaceWith(select);
-        badge.textContent = "Member";
-        badge.className = "text-[10px] font-bold px-2 py-1 rounded-full bg-blue-50 text-blue-600 shrink-0";
-        btn.textContent = "Guest?";
-        btn.className = "toggle-type-btn text-[11px] font-semibold px-2 py-1 rounded-lg border border-blue-200 text-blue-400 hover:border-slate-300 hover:text-slate-500 transition-all shrink-0";
-    } else {
-        // switch back to Guest — replace select with input
-        const select = slot.querySelector("select");
-        const input = document.createElement("input");
-        input.type = "text";
-        input.placeholder = "Guest name";
-        input.dataset.team = team;
-        input.dataset.index = index;
-        input.className = "player-input flex-1 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400 text-sm";
-        input.addEventListener("input", (e) => {
-            state.players[team][index] = e.target.value || null;
-        });
-        select.replaceWith(input);
-        badge.textContent = "Guest";
-        badge.className = "text-[10px] font-bold px-2 py-1 rounded-full bg-slate-100 text-slate-500 shrink-0";
-        btn.textContent = "Member?";
-        btn.className = "toggle-type-btn text-[11px] font-semibold px-2 py-1 rounded-lg border border-slate-200 text-slate-400 hover:border-blue-300 hover:text-blue-500 transition-all shrink-0";
-    }
-}
+// ─── UI Rendering ────────────────────────────────────────────────────────────
 
 function renderPlayers() {
-    teamAPlayers.innerHTML = "";
-    teamBPlayers.innerHTML = "";
+    ["A", "B"].forEach(team => {
+        const container = playerContainers[team];
+        container.innerHTML = "";
 
-    const slots = state.isDoubles ? [0, 1] : [0];
-    slots.forEach((i) => {
-        teamAPlayers.appendChild(playerRow("A", i));
-        teamBPlayers.appendChild(playerRow("B", i));
+        const count = state.isDoubles ? 2 : 1;
+        for (let i = 0; i < count; i++) {
+            const player = state.players[team][i];
+            const row = document.createElement("div");
+            row.className = "flex items-center justify-between";
+
+            const isMember = player.type === 'member';
+
+            row.innerHTML = `
+                <div class="flex items-center gap-3 flex-1">
+                    <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-500">
+                        <span class="material-symbols-outlined text-sm">person</span>
+                    </div>
+                    ${isMember
+                    ? `<select class="bg-transparent border-none p-0 text-white text-sm focus:ring-0 w-full player-val" data-team="${team}" data-index="${i}">
+                             <option value="" disabled ${!player.value ? 'selected' : ''}>Select Member...</option>
+                             <option value="user_123" ${player.value === 'user_123' ? 'selected' : ''}>Marcus Chen</option>
+                           </select>`
+                    : `<input type="text" class="bg-transparent border-none p-0 text-white text-sm focus:ring-0 w-full player-val" 
+                             placeholder="Guest Name..." data-team="${team}" data-index="${i}" value="${player.value || ''}">`
+                }
+                </div>
+                <label class="flex items-center cursor-pointer toggle-member" data-team="${team}" data-index="${i}">
+                    <span class="text-[10px] text-slate-500 mr-2 uppercase font-bold">${isMember ? 'Member' : 'Guest'}</span>
+                    <div class="relative w-8 h-4 ${isMember ? 'bg-orange-600' : 'bg-slate-700'} rounded-full transition-colors">
+                        <div class="absolute ${isMember ? 'right-0.5' : 'left-0.5'} top-0.5 bg-white w-3 h-3 rounded-full shadow-sm transition-all"></div>
+                    </div>
+                </label>
+            `;
+            container.appendChild(row);
+        }
+    });
+}
+
+function renderSets() {
+    setListContainer.innerHTML = "";
+    state.sets.forEach((set, index) => {
+        const row = document.createElement("div");
+        row.className = "flex items-center gap-4";
+        row.innerHTML = `
+            <div class="w-10 text-slate-500 font-black text-xs">SET ${set.set_number}</div>
+            <div class="flex-1 flex gap-4">
+                <input type="number" class="set-score w-full bg-slate-900 border-slate-700 rounded-lg text-center text-orange-500 font-display-stat text-2xl py-1 focus:border-orange-500 focus:ring-0" 
+                    data-index="${index}" data-team="a" value="${set.score_team_a}">
+                <input type="number" class="set-score w-full bg-slate-900 border-slate-700 rounded-lg text-center text-white font-display-stat text-2xl py-1 focus:border-orange-500 focus:ring-0" 
+                    data-index="${index}" data-team="b" value="${set.score_team_b}">
+            </div>
+            <button class="delete-set text-slate-600 hover:text-red-500 transition-colors" data-index="${index}">
+                <span class="material-symbols-outlined text-sm">delete</span>
+            </button>
+        `;
+        setListContainer.appendChild(row);
+    });
+}
+
+// ─── Logic & Helpers ─────────────────────────────────────────────────────────
+
+function setupEventListeners() {
+    // 1. Toggle Member/Guest
+    document.addEventListener("click", e => {
+        const toggle = e.target.closest(".toggle-member");
+        if (toggle) {
+            const { team, index } = toggle.dataset;
+            state.players[team][index].type = state.players[team][index].type === 'member' ? 'guest' : 'member';
+            state.players[team][index].value = null; // reset value on toggle
+            renderPlayers();
+        }
     });
 
-    // Sync guest name input changes back to state
-    document.querySelectorAll(".player-input").forEach((inp) => {
-        inp.addEventListener("input", (e) => {
-            const t = e.target.dataset.team;
-            const idx = Number(e.target.dataset.index);
-            state.players[t][idx] = e.target.value || null;
-        });
+    // 2. Sync Player Inputs
+    document.addEventListener("change", e => {
+        if (e.target.classList.contains("player-val")) {
+            const { team, index } = e.target.dataset;
+            state.players[team][index].value = e.target.value;
+        }
     });
+
+    // 3. Set Scores
+    document.addEventListener("input", e => {
+        if (e.target.classList.contains("set-score")) {
+            const { index, team } = e.target.dataset;
+            const val = parseInt(e.target.value) || 0;
+            state.sets[index][team === 'a' ? 'score_team_a' : 'score_team_b'] = val;
+        }
+    });
+
+    // 4. Add/Delete Sets
+    addSetBtn.addEventListener("click", () => {
+        state.sets.push({ set_number: state.sets.length + 1, score_team_a: 0, score_team_b: 0 });
+        renderSets();
+    });
+
+    document.addEventListener("click", e => {
+        const btn = e.target.closest(".delete-set");
+        if (btn) {
+            const idx = parseInt(btn.dataset.index);
+            state.sets.splice(idx, 1);
+            // Re-index set numbers
+            state.sets.forEach((s, i) => s.set_number = i + 1);
+            renderSets();
+        }
+    });
+
+    // 5. Submit
+    saveBtn.addEventListener("click", submitMatch);
 }
 
-function updateScoreDisplay() {
-    scoreAEl.textContent = state.scores.A;
-    scoreBEl.textContent = state.scores.B;
-    // Colour hint
-    scoreAEl.className = `font-black text-2xl w-8 text-center ${state.scores.A > state.scores.B ? "text-green-600" : "text-slate-900"
-        }`;
-    scoreBEl.className = `font-black text-2xl w-8 text-center ${state.scores.B > state.scores.A ? "text-green-600" : "text-slate-900"
-        }`;
-}
-
-/** Open / close modal */
-function openModal() {
-    clearError();
-    modal.classList.remove("hidden");
-    document.body.classList.add("overflow-hidden");
-}
-function closeModal() {
-    modal.classList.add("hidden");
-    document.body.classList.remove("overflow-hidden");
-}
-
-// ─── Build the POST /matches payload ─────────────────────────────────────────
 function buildPayload() {
-    const location = document.getElementById("matchLocation").value.trim();
-    const communityId = null; // extend later if you add a community selector
+    const locInput = document.querySelector("input[placeholder*='Riverside']");
+
+    // Calculate total sets won to provide a "final score"
+    let setsA = 0;
+    let setsB = 0;
+    state.sets.forEach(s => {
+        if (s.score_team_a > s.score_team_b) setsA++;
+        else if (s.score_team_b > s.score_team_a) setsB++;
+    });
 
     const participants = [];
-    const slots = state.isDoubles ? [0, 1] : [0];
+    ["A", "B"].forEach(team => {
+        const count = state.isDoubles ? 2 : 1;
+        const totalScore = (team === "A") ? setsA : setsB;
 
-    for (const team of ["A", "B"]) {
-        for (const idx of slots) {
-            const uid = state.players[team][idx];
-            if (!uid) throw new Error(`Missing User ID for Team ${team} Player ${idx + 1}`);
+        for (let i = 0; i < count; i++) {
+            const p = state.players[team][i];
+            if (!p.value) throw new Error(`Please fill in Player ${i + 1} for Team ${team}`);
+
             participants.push({
-                user_id: uid,
+                user_id: p.type === 'member' ? p.value : null,
+                guest_name: p.type === 'guest' ? p.value : null,
                 team_identifier: team,
-                score: state.scores[team],
+                score: totalScore // The backend expects a score to determine winner
             });
         }
-    }
-
-    if (state.scores.A === state.scores.B) {
-        throw new Error("Scores are tied — a winner must be determined.");
-    }
+    });
 
     return {
         sport_type_id: state.sportTypeId,
-        community_id: communityId,
-        location,
-        participants,
+        location: locInput.value || "General Location",
+        participants: participants,
+        sets: state.sets
     };
 }
 
-// ─── Submit ───────────────────────────────────────────────────────────────────
 async function submitMatch() {
-    clearError();
-    let payload;
     try {
-        payload = buildPayload();
-    } catch (err) {
-        showError(err.message);
-        return;
-    }
+        const payload = buildPayload();
+        saveBtn.disabled = true;
+        saveBtn.innerText = "Saving...";
 
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = `
-    <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-    </svg>
-    Saving…`;
-
-    try {
         const res = await fetch(`${API_BASE}/api/matches`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(payload)
         });
 
-        const data = await res.json();
-
         if (!res.ok) {
-            throw new Error(data.error ?? "Server error");
+            const errData = await res.json();
+            throw new Error(errData.error || "Server Error");
         }
 
-        // Success — show a toast-style message then close
-        closeModal();
-        showToast(`Match #${data.match_id} saved! 🎉`);
-
-        // Reset state for next entry
-        state.scores = { A: 0, B: 0 };
-        state.players = { A: [null, null], B: [null, null] };
-        document.getElementById("matchLocation").value = "";
-        renderPlayers();
-        updateScoreDisplay();
-
+        alert("Match saved successfully! 🎉");
+        location.reload(); // Or close modal/reset state
     } catch (err) {
-        showError(err.message);
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `
-      <span class="material-symbols-outlined text-base">check_circle</span>
-      Save Match Result`;
+        alert(err.message);
+        saveBtn.disabled = false;
+        saveBtn.innerText = "Save Match Result";
     }
 }
 
-/** Minimal toast notification */
-function showToast(msg) {
-    const toast = document.createElement("div");
-    toast.textContent = msg;
-    toast.className = `
-    fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2
-    bg-slate-900 text-white text-sm font-bold px-6 py-3 rounded-full shadow-xl z-[999]
-    transition-all duration-300 opacity-100`;
-    document.body.appendChild(toast);
-    setTimeout(() => {
-        toast.style.opacity = "0";
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-// ─── Event listeners ──────────────────────────────────────────────────────────
-
-// Open / close
-openBtn?.addEventListener("click", openModal);
-closeBtn.addEventListener("click", closeModal);
-backdrop.addEventListener("click", closeModal);
-
-// Sport selector
-document.getElementById("sportSelector").addEventListener("click", (e) => {
-    const btn = e.target.closest(".sport-btn");
-    if (!btn) return;
-    state.sportTypeId = Number(btn.dataset.sportId);
-    document.querySelectorAll(".sport-btn").forEach((b) => {
-        const active = b === btn;
-        b.classList.toggle("bg-orange-500", active);
-        b.classList.toggle("text-white", active);
-        b.classList.toggle("border-orange-500", active);
-        b.classList.toggle("border-slate-200", !active);
-        b.classList.toggle("text-slate-600", !active);
-    });
-});
-
-// Format toggle
-fmtSingles.addEventListener("click", () => {
-    state.isDoubles = false;
-    fmtSingles.className = "fmt-btn py-3 rounded-xl border-2 border-orange-500 bg-orange-50 text-orange-700 font-bold text-sm transition-all";
-    fmtDoubles.className = "fmt-btn py-3 rounded-xl border-2 border-slate-200 text-slate-500 font-bold text-sm hover:border-orange-300 transition-all";
-    renderPlayers();
-});
-fmtDoubles.addEventListener("click", () => {
-    state.isDoubles = true;
-    fmtDoubles.className = "fmt-btn py-3 rounded-xl border-2 border-orange-500 bg-orange-50 text-orange-700 font-bold text-sm transition-all";
-    fmtSingles.className = "fmt-btn py-3 rounded-xl border-2 border-slate-200 text-slate-500 font-bold text-sm hover:border-orange-300 transition-all";
-    renderPlayers();
-});
-
-// Score +/- buttons
-document.addEventListener("click", (e) => {
-    const btn = e.target.closest(".score-btn");
-    if (!btn) return;
-    const team = btn.dataset.team;
-    const action = btn.dataset.action;
-    if (action === "inc") state.scores[team] = Math.min(99, state.scores[team] + 1);
-    if (action === "dec") state.scores[team] = Math.max(0, state.scores[team] - 1);
-    updateScoreDisplay();
-});
-
-// Submit
-submitBtn.addEventListener("click", submitMatch);
-
-// ─── Init ─────────────────────────────────────────────────────────────────────
-renderPlayers();
-updateScoreDisplay();
+// Run Init
+init();
