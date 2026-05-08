@@ -32,6 +32,12 @@ type UserSignupRequest struct {
 var db *sql.DB
 var authClient *auth.Client
 
+type SetScore struct {
+	SetNumber  int `json:"set_number"`
+	ScoreTeamA int `json:"score_team_a"`
+	ScoreTeamB int `json:"score_team_b"`
+}
+
 type Community struct {
 	ID          int       `json:"id"`
 	Name        string    `json:"name"`
@@ -97,9 +103,10 @@ type JoinCommunityRequest struct {
 //	  "score": 11
 //	}
 type MatchParticipant struct {
-	UserID         int    `json:"user_id"`
-	TeamIdentifier string `json:"team_identifier"` // "A" or "B"
-	Score          int    `json:"score"`
+	UserID         *string `json:"user_id"`
+	GuestName      *string `json:"guest_name"`
+	TeamIdentifier string  `json:"team_identifier"` // "A" or "B"
+	Score          int     `json:"score"`
 }
 
 // CreateMatchRequest is the full JSON body the frontend sends to POST /matches.
@@ -139,6 +146,7 @@ type CreateMatchRequest struct {
 	CommunityID  *int               `json:"community_id"` // nullable → pointer
 	Location     string             `json:"location"`
 	Participants []MatchParticipant `json:"participants"`
+	Sets         []SetScore         `json:"sets"`
 }
 
 // CreateMatchResponse is returned on success.
@@ -159,11 +167,13 @@ type GetMatchResponse struct {
 }
 
 // TeamMember is one row from match_results joined with users.
+
 type TeamMember struct {
-	UserID   int    `json:"user_id"`
-	Username string `json:"username"`
-	Score    int    `json:"score"`
-	IsWinner bool   `json:"is_winner"`
+	UserID    *string `json:"user_id"`    // pointer = nullable
+	Username  *string `json:"username"`   // pointer = nullable
+	GuestName *string `json:"guest_name"` // only for guests
+	Score     int     `json:"score"`
+	IsWinner  bool    `json:"is_winner"`
 }
 
 func main() {
@@ -427,6 +437,19 @@ func CreateMatchHandler(db *sql.DB) http.HandlerFunc {
 		if req.CommunityID != nil {
 			communityVal = *req.CommunityID
 		}
+
+		for _, p := range req.Participants {
+			if p.TeamIdentifier != "A" && p.TeamIdentifier != "B" {
+				writeError(w, http.StatusBadRequest, "team_identifier must be 'A' or 'B'")
+				return
+			}
+			// add this:
+			if (p.UserID == nil) == (p.GuestName == nil) {
+				writeError(w, http.StatusBadRequest, "each participant must have either user_id or guest_name, not both or neither")
+				return
+			}
+		}
+
 		res, err := tx.Exec(
 			`INSERT INTO matches (sport_type_id, community_id, location) VALUES (?, ?, ?)`,
 			req.SportTypeID, communityVal, req.Location,
@@ -446,8 +469,8 @@ func CreateMatchHandler(db *sql.DB) http.HandlerFunc {
 
 		// Insert each participant into match_results
 		stmt, err := tx.Prepare(
-			`INSERT INTO match_results (match_id, user_id, team_identifier, score, is_winner)
-			 VALUES (?, ?, ?, ?, ?)`,
+			`INSERT INTO match_results (match_id, user_id, guest_name, team_identifier, score, is_winner)
+			 VALUES (?, ?, ?, ?, ?, ?)`,
 		)
 		if err != nil {
 			log.Printf("prepare match_results: %v", err)
@@ -458,14 +481,34 @@ func CreateMatchHandler(db *sql.DB) http.HandlerFunc {
 
 		for _, p := range req.Participants {
 			isWinner := p.TeamIdentifier == winner
-			if _, err = stmt.Exec(matchID, p.UserID, p.TeamIdentifier, p.Score, isWinner); err != nil {
+			if _, err = stmt.Exec(matchID, p.UserID, p.GuestName, p.TeamIdentifier, p.Score, isWinner); err != nil {
 				log.Printf("insert match_results: %v", err)
 				if me, ok2 := err.(*mysql.MySQLError); ok2 && me.Number == 1452 {
-					writeError(w, http.StatusBadRequest, "invalid user_id: "+strconv.Itoa(p.UserID))
+					writeError(w, http.StatusBadRequest, "invalid user_id")
 					return
 				}
 				writeError(w, http.StatusInternalServerError, "failed to record participant")
 				return
+			}
+		}
+
+		// Insert sets if provided
+		if len(req.Sets) > 0 {
+			setStmt, err := tx.Prepare(
+				`INSERT INTO match_sets (match_id, set_number, score_team_a, score_team_b)
+         VALUES (?, ?, ?, ?)`,
+			)
+			if err != nil {
+				writeError(w, http.StatusInternalServerError, "database error")
+				return
+			}
+			defer setStmt.Close()
+
+			for _, s := range req.Sets {
+				if _, err = setStmt.Exec(matchID, s.SetNumber, s.ScoreTeamA, s.ScoreTeamB); err != nil {
+					writeError(w, http.StatusInternalServerError, "failed to record set scores")
+					return
+				}
 			}
 		}
 
@@ -539,10 +582,10 @@ func GetMatchHandler(db *sql.DB) http.HandlerFunc {
 
 		// ── Fetch participants ─────────────────────────────────────────
 		rows, err := db.Query(
-			`SELECT mr.user_id, u.username, mr.team_identifier, mr.score, mr.is_winner
-			   FROM match_results mr
-			   JOIN users u ON u.id = mr.user_id
-			  WHERE mr.match_id = ?`,
+			`SELECT mr.user_id, u.username, mr.guest_name, mr.team_identifier, mr.score, mr.is_winner
+			FROM match_results mr
+			LEFT JOIN users u ON u.firebase_uid = mr.user_id  -- LEFT JOIN so guests still appear
+			WHERE mr.match_id = ?`,
 			matchID,
 		)
 		if err != nil {
@@ -552,11 +595,35 @@ func GetMatchHandler(db *sql.DB) http.HandlerFunc {
 		}
 		defer rows.Close()
 
+		// after fetching participants, add:
+		setRows, err := db.Query(
+			`SELECT set_number, score_team_a, score_team_b 
+       FROM match_sets 
+      WHERE match_id = ? 
+      ORDER BY set_number`,
+			matchID,
+		)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "database error")
+			return
+		}
+		defer setRows.Close()
+
+		resp.Sets = []SetScore{}
+		for setRows.Next() {
+			var s SetScore
+			if err = setRows.Scan(&s.SetNumber, &s.ScoreTeamA, &s.ScoreTeamB); err != nil {
+				writeError(w, http.StatusInternalServerError, "database error")
+				return
+			}
+			resp.Sets = append(resp.Sets, s)
+		}
+
 		resp.Teams = map[string][]TeamMember{"A": {}, "B": {}}
 		for rows.Next() {
 			var m TeamMember
 			var team string
-			if err = rows.Scan(&m.UserID, &m.Username, &team, &m.Score, &m.IsWinner); err != nil {
+			if err = rows.Scan(&m.UserID, &m.Username, &m.GuestName, &team, &m.Score, &m.IsWinner); err != nil {
 				log.Printf("scan participant: %v", err)
 				writeError(w, http.StatusInternalServerError, "database error")
 				return
@@ -583,16 +650,12 @@ func GetMatchHandler(db *sql.DB) http.HandlerFunc {
 //	})
 func ListUserMatchesHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userIDStr := r.URL.Query().Get("user_id")
-		if userIDStr == "" {
+		userID := r.URL.Query().Get("user_id")
+		if userID == "" {
 			writeError(w, http.StatusBadRequest, "user_id query param is required")
 			return
 		}
-		userID, err := strconv.Atoi(userIDStr)
-		if err != nil {
-			writeError(w, http.StatusBadRequest, "invalid user_id")
-			return
-		}
+
 		limit := 20
 		if l := r.URL.Query().Get("limit"); l != "" {
 			if parsed, err2 := strconv.Atoi(l); err2 == nil && parsed > 0 {
