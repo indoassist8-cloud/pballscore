@@ -5,9 +5,10 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>PicklePro Match History</title>
+    <title>PBALL Dashboard</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100;300;400;500;600;700;800;900&amp;display=swap"
+        rel="stylesheet" />
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
@@ -20,53 +21,53 @@
             theme: {
                 extend: {
                     "colors": {
-                        "on-primary-fixed": "#131b2e",
-                        "background": "#f7f9fb",
-                        "on-error": "#ffffff",
-                        "surface-container-highest": "#e0e3e5",
-                        "inverse-surface": "#2d3133",
-                        "inverse-on-surface": "#eff1f3",
-                        "on-primary-container": "#7c839b",
-                        "tertiary-container": "#001e2c",
-                        "surface-variant": "#e0e3e5",
-                        "on-tertiary": "#ffffff",
-                        "on-surface-variant": "#45464d",
-                        "surface-container-high": "#e6e8ea",
-                        "on-secondary-fixed-variant": "#713700",
-                        "tertiary-fixed-dim": "#7bd0ff",
-                        "on-background": "#191c1e",
-                        "surface-container-low": "#f2f4f6",
-                        "primary": "#000000",
-                        "on-secondary-fixed": "#301400",
-                        "on-tertiary-fixed": "#001e2c",
-                        "tertiary": "#000000",
-                        "surface": "#f7f9fb",
-                        "inverse-primary": "#bec6e0",
-                        "on-secondary": "#ffffff",
-                        "surface-dim": "#d8dadc",
-                        "outline-variant": "#c6c6cd",
-                        "secondary-fixed-dim": "#ffb783",
-                        "on-error-container": "#93000a",
-                        "secondary-fixed": "#ffdcc5",
-                        "secondary": "#944a00",
-                        "tertiary-fixed": "#c4e7ff",
-                        "on-tertiary-container": "#008ebf",
-                        "on-secondary-container": "#693300",
-                        "primary-container": "#131b2e",
-                        "on-tertiary-fixed-variant": "#004c69",
-                        "on-primary": "#ffffff",
-                        "surface-tint": "#565e74",
-                        "secondary-container": "#fd933d",
-                        "surface-container": "#eceef0",
-                        "outline": "#76777d",
-                        "surface-bright": "#f7f9fb",
-                        "on-surface": "#191c1e",
-                        "error": "#ba1a1a",
                         "on-primary-fixed-variant": "#3f465c",
-                        "error-container": "#ffdad6",
-                        "primary-fixed-dim": "#bec6e0",
+                        "on-tertiary-container": "#008ebf",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary-container": "#131b2e",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
                         "surface-container-lowest": "#ffffff",
-                        "primary-fixed": "#dae2fd"
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#000000",
+                        "secondary-fixed-dim": "#ffb783",
+                        "on-tertiary-fixed-variant": "#004c69",
+                        "surface-variant": "#e0e3e5",
+                        "on-tertiary-fixed": "#001e2c",
+                        "on-surface": "#191c1e",
+                        "surface-bright": "#f7f9fb",
+                        "tertiary-fixed": "#c4e7ff",
+                        "primary-fixed": "#dae2fd",
+                        "tertiary-container": "#001e2c",
+                        "on-surface-variant": "#45464d",
+                        "surface": "#f7f9fb",
+                        "secondary": "#944a00",
+                        "background": "#f7f9fb",
+                        "on-secondary-container": "#693300",
+                        "surface-container": "#eceef0",
+                        "surface-tint": "#565e74",
+                        "on-background": "#191c1e",
+                        "on-secondary-fixed": "#301400",
+                        "inverse-surface": "#2d3133",
+                        "inverse-primary": "#bec6e0",
+                        "on-primary-fixed": "#131b2e",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#76777d",
+                        "surface-dim": "#d8dadc",
+                        "surface-container-high": "#e6e8ea",
+                        "secondary-fixed": "#ffdcc5",
+                        "on-secondary-fixed-variant": "#713700",
+                        "surface-container-low": "#f2f4f6",
+                        "primary-fixed-dim": "#bec6e0",
+                        "on-primary-container": "#7c839b",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#fd933d",
+                        "primary": "#000000",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#7bd0ff",
+                        "outline-variant": "#c6c6cd"
                     },
                     "borderRadius": {
                         "DEFAULT": "0.25rem",
@@ -74,398 +75,465 @@
                         "xl": "0.75rem",
                         "full": "9999px"
                     },
-                    "spacing": {
-                        "xs": "0.25rem",
-                        "lg": "1.5rem",
-                        "gutter": "1rem",
-                        "sm": "0.5rem",
-                        "md": "1rem",
-                        "container-max": "1280px",
-                        "xl": "2.5rem"
-                    },
                     "fontFamily": {
-                        "stat-label": ["Lexend"],
-                        "headline-md": ["Lexend"],
-                        "headline-lg": ["Lexend"],
+                        "body-md": ["Lexend"],
+                        "label-bold": ["Lexend"],
                         "display-stat": ["Lexend"],
                         "body-lg": ["Lexend"],
-                        "label-bold": ["Lexend"],
-                        "body-md": ["Lexend"]
+                        "stat-label": ["Lexend"],
+                        "headline-md": ["Lexend"],
+                        "headline-lg": ["Lexend"]
                     },
                     "fontSize": {
-                        "stat-label": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500" }],
-                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "700" }],
-                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-bold": ["14px", { "lineHeight": "1.2", "fontWeight": "600" }],
                         "display-stat": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
                         "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
-                        "label-bold": ["14px", { "lineHeight": "1.2", "fontWeight": "600" }],
-                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                        "stat-label": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }]
                     }
                 }
             }
         }
     </script>
     <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
-
-        body {
-            background-color: #131b2e;
-            /* Overriding for specific dark navy requirement */
-        }
     </style>
+    <script type="module" src="js/fbauth-sc.js"></script>
 </head>
 
-<body class="flex min-h-screen">
-    <!-- SideNavBar Component -->
+<body class="bg-background text-on-surface min-h-screen flex flex-col md:flex-row">
+    <!-- Start of Header + nav bar 
+    ============================================= 
+    =============================================
+    =============================================
+    =============================================
+    -->
+    <!-- SideNavBar (Desktop Only) -->
     <aside
-        class="hidden md:flex h-screen w-24 flex-col sticky left-0 top-0 bg-slate-900 border-r border-slate-800 shadow-xl flex flex-col items-center py-6 gap-8 z-50">
+        class="hidden md:flex h-screen w-20 flex-col sticky left-0 top-0 bg-slate-900 dark:bg-slate-950 border-r border-slate-800 shadow-xl flex flex-col items-center py-6 gap-8 z-50">
         <div class="mb-4">
-            <div
-                class="w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center text-white font-black italic text-xl">
-                P</div>
+            <img alt="App Logo" class="w-12 h-12 object-contain"
+                data-alt="Stylized pickleball icon logo with sharp geometric edges and vibrant orange accents on a dark background"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAl_k3cKZeSpXS0-fhrHuGN-CvhIZL8oqOOqvh9fYuoeyB0RneGO3bc1XaARfPyFk8vPYa-ZCBfKO8DLQPB4ilSxla18tsKtLVdkiAunWv08sXFKogJbTwd7l2L4dsYn8QHLzW1N-o-pJkXackBtFe_R26qEzarGvncaRJsbjrXv42WLxMM1KkXFxQEaMVxasuClW6QCDraXTvFH97-bzgvnIXCJvrmUXDJxUgR_Q-0rnbhofHg4WFFcVPXzTAOI_py1NGsoYtiL9I" />
         </div>
         <nav class="flex flex-col gap-6 flex-1">
-            <a class="text-slate-400 hover:text-white p-3 hover:bg-slate-800 transition-all duration-300 rounded-lg group"
-                href="#">
-                <span class="material-symbols-outlined block text-2xl">home</span>
+            <a class="text-white bg-orange-600 rounded-lg p-3 transform transition-transform hover:scale-110 active:opacity-80"
+                href="#" title="Dashboard">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
             </a>
-            <a class="text-slate-400 hover:text-white p-3 hover:bg-slate-800 transition-all duration-300 rounded-lg"
-                href="#">
-                <span class="material-symbols-outlined block text-2xl">groups</span>
+            <a class="text-slate-200 hover:text-white p-3 transform transition-transform hover:scale-110 active:opacity-80"
+                href="community.html" title="Community">
+                <span class="material-symbols-outlined" data-icon="groups">groups</span>
             </a>
-            <a class="text-white bg-orange-600 rounded-lg p-3 shadow-lg shadow-orange-600/20" href="#">
-                <span class="material-symbols-outlined block text-2xl" data-weight="fill"
-                    style="font-variation-settings: 'FILL' 1;">leaderboard</span>
-            </a>
-            <a class="text-slate-400 hover:text-white p-3 hover:bg-slate-800 transition-all duration-300 rounded-lg"
-                href="#">
-                <span class="material-symbols-outlined block text-2xl">person</span>
+            <a class="text-slate-200 hover:text-white p-3 transform transition-transform hover:scale-110 active:opacity-80"
+                href="match.html" title="Match History">
+                <span class="material-symbols-outlined" data-icon="history">history</span>
             </a>
         </nav>
-        <div class="mt-auto flex flex-col gap-6">
-            <a class="text-slate-400 hover:text-white p-3 hover:bg-slate-800 transition-all duration-300 rounded-lg"
-                href="#">
-                <span class="material-symbols-outlined block text-2xl">help</span>
+        <div class="mt-auto">
+            <a class="text-slate-400 hover:text-white p-3 transition-all duration-300" href="#" title="Support">
+                <span class="material-symbols-outlined" data-icon="help">help</span>
             </a>
-            <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-slate-700">
-                <img alt="User Profile"
-                    data-alt="A professional studio portrait of a modern athlete with sharp features, looking confidently at the camera. The lighting is dramatic and cinematic with deep shadows and warm orange highlights on the side of the face, maintaining a high-performance sports aesthetic."
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDunqsyR57bw3I0qElwGhsJFuBDMhctX73Au0VhxBcNSLn8_UABgcB_CR-9iSsjaX1X-TunJYSjm5-gW-O8uGE2UYcPE4wXgm0sacaBKN8957C6bNRjJV895UqLwIJq5qEQmizaA3F3Gb4FWM7suMWjJL_CFxzDmXxehd9zdQCni9dSRNwIcC-AQ8Bi8hdUobfKcKZwBmkykGCSeieZwg6f8I9MzjfnfghTDfMicHmZtTwgsQbAEIAQ_KczH03gwLJMRQWs1hrZy00" />
-            </div>
         </div>
     </aside>
-    <!-- Main Content Area -->
-    <main class="flex-1 flex flex-col min-w-0 bg-[#131b2e]">
+    <div class="flex-1 flex flex-col min-w-0">
         <!-- TopAppBar -->
         <header
-            class="bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-800 shadow-sm flex justify-between items-center w-full px-8 h-20">
-            <div class="flex items-center gap-4">
-                <h1 class="font-lexend font-black italic text-2xl text-white tracking-tighter">PICKLEPRO</h1>
-                <div class="h-6 w-px bg-slate-700 mx-2"></div>
-                <div class="text-slate-400 font-lexend text-sm font-medium">Match History</div>
-            </div>
-            <div class="flex items-center gap-6">
-                <div class="relative hidden lg:block">
-                    <span
-                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">search</span>
-                    <input
-                        class="bg-slate-800 border-none rounded-full py-2 pl-10 pr-4 text-sm text-slate-200 focus:ring-2 focus:ring-orange-600 w-64 transition-all"
-                        placeholder="Search matches..." type="text" />
+            class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm docked full-width top-0 sticky z-40 flex justify-between items-center w-full px-4 h-16">
+            <div class="flex items-center gap-4 flex-1">
+                <div class="md:hidden">
+                    <img alt="PICKLEPRO Logo" class="h-8 w-8"
+                        data-alt="Small pickleball logo for mobile header with vibrant orange highlights"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8mJDoaYm0G9ytQQ68R7PTTY7BBSFdO79_0X2kMFkOWpqL9q70cub6_eFyMZZN5TBE-RxhRUKmZsNdCQeBqfKb5-WxTVroQbhXqTePFTXvVX2_XEhWdJXhZweTykMhpwfLA9ndC7ZRARk5uoFilQcYfw1M4sjBRvtdm1Jyw0TiS8gassf6850SYXN6nNObSGggkVyIttpWm9MQQhiQYUPumm7tHfFa0kxLVEzBkWQDCQK7TvbEx2VVyafxY5VtvhwCqBHGYVwdV9Y" />
                 </div>
-                <div class="flex items-center gap-3">
-                    <button class="p-2 text-slate-400 hover:text-orange-500 transition-colors">
-                        <span class="material-symbols-outlined">notifications</span>
+                <div class="relative max-w-xs w-full hidden sm:block">
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                    <input
+                        class="w-full pl-10 pr-4 py-1.5 rounded-full bg-surface-container border-none text-body-md focus:ring-2 focus:ring-secondary-container"
+                        placeholder="Search players..." type="text" />
+                </div>
+                <h1
+                    class="text-xl font-black italic text-slate-900 dark:text-white tracking-tighter ml-2 font-lexend font-bold tracking-tight">
+                    PICKLEPRO</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <button
+                    class="p-2 text-slate-600 dark:text-slate-400 hover:text-orange-500 transition-colors duration-200">
+                    <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+                </button>
+                <div class="relative group">
+                    <button id="settingsBtn"
+                        class="p-2 text-slate-600 dark:text-slate-400 hover:text-orange-500 transition-colors duration-200">
+                        <span class="material-symbols-outlined" data-icon="settings">settings</span>
                     </button>
-                    <button class="p-2 text-slate-400 hover:text-orange-500 transition-colors">
-                        <span class="material-symbols-outlined">settings</span>
+                </div>
+                <div class="relative group">
+                    <button
+                        class="w-8 h-8 rounded-full overflow-hidden border-2 border-orange-500 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-orange-500/50">
+                        <img alt="User profile" class="w-full h-full object-cover"
+                            data-alt="Professional headshot of a smiling young male athlete with short hair and athletic attire"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpFwfKr0vg251lMWJn1BNaDYJj6MuwAdJImpY9r2D02AwCP_3rbH2Ru8c8r4Eomq6nuncoMyYmUCoVvMgQxU-is8kIsJeyKdpQDBaL0cP-oTLZCBehFcQd1P8GhxqRymRkf7yF2Kyi8o-IhFa9-2VK2B4jKTxANt7rstCjAeN9xWEyjtxvO6dV2Np3KDM1j_xWFMeMQw_-qedLIG8zH9NSa3zG-HCZ4351EmJidKwQAnIqLUSMHit4UgbI0r0WrABi2Ddc_3ULnU4" />
                     </button>
+                    <!-- User Dropdown Menu -->
+                    <div
+                        class="absolute right-0 mt-3 w-64 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-white/20 dark:border-slate-700/30 rounded-xl shadow-2xl opacity-0 invisible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-300 transform origin-top-right scale-95 group-focus-within:scale-100 z-50">
+                        <div class="p-4 border-b border-slate-200/50 dark:border-slate-700/50">
+                            <p class="text-primary-container dark:text-white font-bold font-lexend">Maverick</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">maverick@picklepro.com</p>
+                        </div>
+                        <div class="p-2">
+                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 hover:bg-orange-500 hover:text-white transition-colors"
+                                href="#">
+                                <span class="material-symbols-outlined text-lg">manage_accounts</span>
+                                <span class="font-medium">Manage Account</span>
+                            </a>
+                            <a id="signOutBtn"
+                                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                href="javascript:void(0)">
+                                <span class="material-symbols-outlined text-lg">logout</span>
+                                <span class="font-medium">Sign out</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
-        <!-- Page Content -->
-        <div class="p-8 max-w-7xl mx-auto w-full">
-            <!-- Hero Header Section -->
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-                <div>
-                    <h2 class="font-headline-lg text-white mb-2">Match History</h2>
-                    <p class="text-slate-400 font-body-md">Keep track of your performance and elite tier progression.
-                    </p>
+        <!-- End of Header + nav bar 
+        ============================================= 
+        =============================================
+        =============================================
+        =============================================
+
+        -->
+        <!-- Main Content Area 
+        ============================================================
+        ============================================================
+        ============================================================
+        ============================================================
+        Main Content Area -->
+        <main class="flex-1 p-4 md:p-8 space-y-8 pb-24 md:pb-8">
+            <!-- TopAppBar -->
+            <header
+                class="bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-800 shadow-sm flex justify-between items-center w-full px-8 h-20">
+                <div class="flex items-center gap-4">
+                    <h1 class="font-lexend font-black italic text-2xl text-white tracking-tighter">PICKLEPRO</h1>
+                    <div class="h-6 w-px bg-slate-700 mx-2"></div>
+                    <div class="text-slate-400 font-lexend text-sm font-medium">Match History</div>
                 </div>
-                <button
-                    class="bg-orange-600 hover:bg-orange-500 text-white font-label-bold py-4 px-8 rounded-xl shadow-lg shadow-orange-600/20 flex items-center gap-2 transition-all transform active:scale-95">
-                    <span class="material-symbols-outlined">add_circle</span>
-                    Record Match
-                </button>
-            </div>
-            <!-- Filters & Stats Overview -->
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-                <!-- Tabs -->
-                <div
-                    class="lg:col-span-3 flex items-center gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 self-start">
+                <div class="flex items-center gap-6">
+                    <div class="relative hidden lg:block">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">search</span>
+                        <input
+                            class="bg-slate-800 border-none rounded-full py-2 pl-10 pr-4 text-sm text-slate-200 focus:ring-2 focus:ring-orange-600 w-64 transition-all"
+                            placeholder="Search matches..." type="text" />
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button class="p-2 text-slate-400 hover:text-orange-500 transition-colors">
+                            <span class="material-symbols-outlined">notifications</span>
+                        </button>
+                        <button class="p-2 text-slate-400 hover:text-orange-500 transition-colors">
+                            <span class="material-symbols-outlined">settings</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <!-- Page Content -->
+            <div class="p-8 max-w-7xl mx-auto w-full">
+                <!-- Hero Header Section -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+                    <div>
+                        <h2 class="font-headline-lg text-white mb-2">Match History</h2>
+                        <p class="text-slate-400 font-body-md">Keep track of your performance and elite tier
+                            progression.
+                        </p>
+                    </div>
                     <button
-                        class="px-8 py-3 rounded-xl font-label-bold text-white bg-slate-800 shadow-sm transition-all">All
-                        Matches</button>
-                    <button
-                        class="px-8 py-3 rounded-xl font-label-bold text-slate-400 hover:text-white transition-all">Wins</button>
-                    <button
-                        class="px-8 py-3 rounded-xl font-label-bold text-slate-400 hover:text-white transition-all">Losses</button>
+                        class="bg-orange-600 hover:bg-orange-500 text-white font-label-bold py-4 px-8 rounded-xl shadow-lg shadow-orange-600/20 flex items-center gap-2 transition-all transform active:scale-95">
+                        <span class="material-symbols-outlined">add_circle</span>
+                        Record Match
+                    </button>
                 </div>
-                <!-- Quick Stats -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex justify-around items-center">
-                    <div class="text-center">
-                        <div class="text-orange-500 font-display-stat text-2xl">24</div>
-                        <div class="text-slate-500 font-stat-label">TOTAL</div>
+                <!-- Filters & Stats Overview -->
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Tabs -->
+                    <div
+                        class="lg:col-span-3 flex items-center gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 self-start">
+                        <button
+                            class="px-8 py-3 rounded-xl font-label-bold text-white bg-slate-800 shadow-sm transition-all">All
+                            Matches</button>
+                        <button
+                            class="px-8 py-3 rounded-xl font-label-bold text-slate-400 hover:text-white transition-all">Wins</button>
+                        <button
+                            class="px-8 py-3 rounded-xl font-label-bold text-slate-400 hover:text-white transition-all">Losses</button>
                     </div>
-                    <div class="w-px h-8 bg-slate-800"></div>
-                    <div class="text-center">
-                        <div class="text-green-500 font-display-stat text-2xl">18</div>
-                        <div class="text-slate-500 font-stat-label">WINS</div>
-                    </div>
-                    <div class="w-px h-8 bg-slate-800"></div>
-                    <div class="text-center">
-                        <div class="text-slate-200 font-display-stat text-2xl">75%</div>
-                        <div class="text-slate-500 font-stat-label">WIN %</div>
-                    </div>
-                </div>
-            </div>
-            <!-- Match Cards List -->
-            <div class="space-y-6">
-                <!-- Match Card 1 (Win) -->
-                <div
-                    class="bg-white rounded-2xl overflow-hidden shadow-xl border border-slate-200 flex flex-col md:flex-row transition-transform hover:translate-y-[-4px]">
-                    <!-- Winner Highlight Ribbon -->
-                    <div class="bg-orange-600 md:w-3 flex items-center justify-center">
-                        <div class="hidden md:block w-full h-full bg-orange-600"></div>
-                    </div>
-                    <div class="flex-1 p-6 md:p-8 flex flex-col md:flex-row items-center gap-8">
-                        <!-- Sport Icon & Status -->
-                        <div class="flex flex-col items-center gap-2">
-                            <div
-                                class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-4xl shadow-inner">
-                                🎾
-                            </div>
-                            <span
-                                class="px-3 py-1 bg-orange-100 text-orange-700 font-label-bold text-[10px] uppercase rounded-full tracking-widest">Victory</span>
+                    <!-- Quick Stats -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex justify-around items-center">
+                        <div class="text-center">
+                            <div class="text-orange-500 font-display-stat text-2xl">24</div>
+                            <div class="text-slate-500 font-stat-label">TOTAL</div>
                         </div>
-                        <!-- Match Detail -->
-                        <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8 items-center w-full">
-                            <!-- Team A -->
-                            <div class="text-center md:text-right">
-                                <div class="font-headline-md text-slate-900 mb-1">Marcus Thorne</div>
-                                <div class="flex md:justify-end items-center gap-2">
-                                    <span class="text-slate-500 font-body-md">Alex Rivera</span>
-                                    <span
-                                        class="px-2 py-0.5 bg-slate-100 text-slate-500 font-label-bold text-[10px] rounded uppercase">Guest</span>
-                                </div>
-                            </div>
-                            <!-- Score Center -->
-                            <div class="flex flex-col items-center">
-                                <div class="font-display-stat text-orange-600 text-5xl mb-2 italic">2 - 0</div>
-                                <div class="flex gap-2">
-                                    <span
-                                        class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S1:
-                                        21-12</span>
-                                    <span
-                                        class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S2:
-                                        21-18</span>
-                                </div>
-                            </div>
-                            <!-- Team B -->
-                            <div class="text-center md:text-left">
-                                <div class="font-headline-md text-slate-400 mb-1">David Chen</div>
-                                <div class="flex md:justify-start items-center gap-2">
-                                    <span class="text-slate-400 font-body-md">Sarah Jenkins</span>
-                                </div>
-                            </div>
+                        <div class="w-px h-8 bg-slate-800"></div>
+                        <div class="text-center">
+                            <div class="text-green-500 font-display-stat text-2xl">18</div>
+                            <div class="text-slate-500 font-stat-label">WINS</div>
                         </div>
-                        <!-- Meta Info -->
-                        <div
-                            class="border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8 flex flex-col gap-3 min-w-[200px]">
-                            <div class="flex items-center gap-2 text-slate-500">
-                                <span class="material-symbols-outlined text-orange-600 text-lg">location_on</span>
-                                <span class="font-body-md">Elite Paddle Club</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-slate-500">
-                                <span class="material-symbols-outlined text-orange-600 text-lg">calendar_today</span>
-                                <span class="font-body-md">Oct 12, 2023 • 18:30</span>
-                            </div>
-                            <div class="mt-2">
-                                <span
-                                    class="px-3 py-1 bg-slate-100 text-slate-600 font-label-bold text-[10px] rounded-full uppercase">Tournament
-                                    Finals</span>
-                            </div>
+                        <div class="w-px h-8 bg-slate-800"></div>
+                        <div class="text-center">
+                            <div class="text-slate-200 font-display-stat text-2xl">75%</div>
+                            <div class="text-slate-500 font-stat-label">WIN %</div>
                         </div>
                     </div>
                 </div>
-                <!-- Match Card 2 (Loss) -->
-                <div
-                    class="bg-white/95 rounded-2xl overflow-hidden shadow-lg border border-slate-200 flex flex-col md:flex-row transition-transform hover:translate-y-[-4px]">
-                    <!-- Loser Highlight Ribbon -->
-                    <div class="bg-slate-200 md:w-3 flex items-center justify-center">
-                        <div class="hidden md:block w-full h-full bg-slate-200"></div>
-                    </div>
-                    <div class="flex-1 p-6 md:p-8 flex flex-col md:flex-row items-center gap-8">
-                        <!-- Sport Icon & Status -->
-                        <div class="flex flex-col items-center gap-2">
-                            <div
-                                class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-4xl grayscale opacity-70">
-                                🎾
-                            </div>
-                            <span
-                                class="px-3 py-1 bg-slate-100 text-slate-500 font-label-bold text-[10px] uppercase rounded-full tracking-widest">Defeat</span>
+                <!-- Match Cards List -->
+                <div class="space-y-6">
+                    <!-- Match Card 1 (Win) -->
+                    <div
+                        class="bg-white rounded-2xl overflow-hidden shadow-xl border border-slate-200 flex flex-col md:flex-row transition-transform hover:translate-y-[-4px]">
+                        <!-- Winner Highlight Ribbon -->
+                        <div class="bg-orange-600 md:w-3 flex items-center justify-center">
+                            <div class="hidden md:block w-full h-full bg-orange-600"></div>
                         </div>
-                        <!-- Match Detail -->
-                        <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8 items-center w-full">
-                            <!-- Team A -->
-                            <div class="text-center md:text-right">
-                                <div class="font-headline-md text-slate-400 mb-1">Marcus Thorne</div>
-                                <div class="flex md:justify-end items-center gap-2">
-                                    <span class="text-slate-400 font-body-md">Guest Player</span>
-                                    <span
-                                        class="px-2 py-0.5 bg-slate-100 text-slate-400 font-label-bold text-[10px] rounded uppercase">Guest</span>
-                                </div>
-                            </div>
-                            <!-- Score Center -->
-                            <div class="flex flex-col items-center">
-                                <div class="font-display-stat text-slate-400 text-5xl mb-2 italic">1 - 2</div>
-                                <div class="flex gap-2">
-                                    <span
-                                        class="px-3 py-1 bg-slate-200 text-slate-600 font-label-bold text-xs rounded-lg">S1:
-                                        19-21</span>
-                                    <span
-                                        class="px-3 py-1 bg-orange-600 text-white font-label-bold text-xs rounded-lg">S2:
-                                        21-15</span>
-                                    <span
-                                        class="px-3 py-1 bg-slate-200 text-slate-600 font-label-bold text-xs rounded-lg">S3:
-                                        18-21</span>
-                                </div>
-                            </div>
-                            <!-- Team B (Winner) -->
-                            <div class="text-center md:text-left">
-                                <div class="font-headline-md text-slate-900 mb-1">Leo Rodriguez</div>
+                        <div class="flex-1 p-6 md:p-8 flex flex-col md:flex-row items-center gap-8">
+                            <!-- Sport Icon & Status -->
+                            <div class="flex flex-col items-center gap-2">
                                 <div
-                                    class="flex md:justify-start items-center gap-2 text-orange-600 font-label-bold text-sm">
-                                    <span>Winner</span>
-                                    <span class="material-symbols-outlined text-sm">verified</span>
+                                    class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-4xl shadow-inner">
+                                    🎾
+                                </div>
+                                <span
+                                    class="px-3 py-1 bg-orange-100 text-orange-700 font-label-bold text-[10px] uppercase rounded-full tracking-widest">Victory</span>
+                            </div>
+                            <!-- Match Detail -->
+                            <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8 items-center w-full">
+                                <!-- Team A -->
+                                <div class="text-center md:text-right">
+                                    <div class="font-headline-md text-slate-900 mb-1">Marcus Thorne</div>
+                                    <div class="flex md:justify-end items-center gap-2">
+                                        <span class="text-slate-500 font-body-md">Alex Rivera</span>
+                                        <span
+                                            class="px-2 py-0.5 bg-slate-100 text-slate-500 font-label-bold text-[10px] rounded uppercase">Guest</span>
+                                    </div>
+                                </div>
+                                <!-- Score Center -->
+                                <div class="flex flex-col items-center">
+                                    <div class="font-display-stat text-orange-600 text-5xl mb-2 italic">2 - 0</div>
+                                    <div class="flex gap-2">
+                                        <span
+                                            class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S1:
+                                            21-12</span>
+                                        <span
+                                            class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S2:
+                                            21-18</span>
+                                    </div>
+                                </div>
+                                <!-- Team B -->
+                                <div class="text-center md:text-left">
+                                    <div class="font-headline-md text-slate-400 mb-1">David Chen</div>
+                                    <div class="flex md:justify-start items-center gap-2">
+                                        <span class="text-slate-400 font-body-md">Sarah Jenkins</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Meta Info -->
+                            <div
+                                class="border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8 flex flex-col gap-3 min-w-[200px]">
+                                <div class="flex items-center gap-2 text-slate-500">
+                                    <span class="material-symbols-outlined text-orange-600 text-lg">location_on</span>
+                                    <span class="font-body-md">Elite Paddle Club</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-slate-500">
+                                    <span
+                                        class="material-symbols-outlined text-orange-600 text-lg">calendar_today</span>
+                                    <span class="font-body-md">Oct 12, 2023 • 18:30</span>
+                                </div>
+                                <div class="mt-2">
+                                    <span
+                                        class="px-3 py-1 bg-slate-100 text-slate-600 font-label-bold text-[10px] rounded-full uppercase">Tournament
+                                        Finals</span>
                                 </div>
                             </div>
                         </div>
-                        <!-- Meta Info -->
-                        <div
-                            class="border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8 flex flex-col gap-3 min-w-[200px]">
-                            <div class="flex items-center gap-2 text-slate-500">
-                                <span class="material-symbols-outlined text-slate-400 text-lg">location_on</span>
-                                <span class="font-body-md">Sunset Courts</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-slate-500">
-                                <span class="material-symbols-outlined text-slate-400 text-lg">calendar_today</span>
-                                <span class="font-body-md">Oct 08, 2023 • 20:00</span>
-                            </div>
-                            <div class="mt-2">
+                    </div>
+                    <!-- Match Card 2 (Loss) -->
+                    <div
+                        class="bg-white/95 rounded-2xl overflow-hidden shadow-lg border border-slate-200 flex flex-col md:flex-row transition-transform hover:translate-y-[-4px]">
+                        <!-- Loser Highlight Ribbon -->
+                        <div class="bg-slate-200 md:w-3 flex items-center justify-center">
+                            <div class="hidden md:block w-full h-full bg-slate-200"></div>
+                        </div>
+                        <div class="flex-1 p-6 md:p-8 flex flex-col md:flex-row items-center gap-8">
+                            <!-- Sport Icon & Status -->
+                            <div class="flex flex-col items-center gap-2">
+                                <div
+                                    class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-4xl grayscale opacity-70">
+                                    🎾
+                                </div>
                                 <span
-                                    class="px-3 py-1 bg-slate-100 text-slate-500 font-label-bold text-[10px] rounded-full uppercase">Ranked
-                                    Scrimmage</span>
+                                    class="px-3 py-1 bg-slate-100 text-slate-500 font-label-bold text-[10px] uppercase rounded-full tracking-widest">Defeat</span>
+                            </div>
+                            <!-- Match Detail -->
+                            <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8 items-center w-full">
+                                <!-- Team A -->
+                                <div class="text-center md:text-right">
+                                    <div class="font-headline-md text-slate-400 mb-1">Marcus Thorne</div>
+                                    <div class="flex md:justify-end items-center gap-2">
+                                        <span class="text-slate-400 font-body-md">Guest Player</span>
+                                        <span
+                                            class="px-2 py-0.5 bg-slate-100 text-slate-400 font-label-bold text-[10px] rounded uppercase">Guest</span>
+                                    </div>
+                                </div>
+                                <!-- Score Center -->
+                                <div class="flex flex-col items-center">
+                                    <div class="font-display-stat text-slate-400 text-5xl mb-2 italic">1 - 2</div>
+                                    <div class="flex gap-2">
+                                        <span
+                                            class="px-3 py-1 bg-slate-200 text-slate-600 font-label-bold text-xs rounded-lg">S1:
+                                            19-21</span>
+                                        <span
+                                            class="px-3 py-1 bg-orange-600 text-white font-label-bold text-xs rounded-lg">S2:
+                                            21-15</span>
+                                        <span
+                                            class="px-3 py-1 bg-slate-200 text-slate-600 font-label-bold text-xs rounded-lg">S3:
+                                            18-21</span>
+                                    </div>
+                                </div>
+                                <!-- Team B (Winner) -->
+                                <div class="text-center md:text-left">
+                                    <div class="font-headline-md text-slate-900 mb-1">Leo Rodriguez</div>
+                                    <div
+                                        class="flex md:justify-start items-center gap-2 text-orange-600 font-label-bold text-sm">
+                                        <span>Winner</span>
+                                        <span class="material-symbols-outlined text-sm">verified</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Meta Info -->
+                            <div
+                                class="border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8 flex flex-col gap-3 min-w-[200px]">
+                                <div class="flex items-center gap-2 text-slate-500">
+                                    <span class="material-symbols-outlined text-slate-400 text-lg">location_on</span>
+                                    <span class="font-body-md">Sunset Courts</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-slate-500">
+                                    <span class="material-symbols-outlined text-slate-400 text-lg">calendar_today</span>
+                                    <span class="font-body-md">Oct 08, 2023 • 20:00</span>
+                                </div>
+                                <div class="mt-2">
+                                    <span
+                                        class="px-3 py-1 bg-slate-100 text-slate-500 font-label-bold text-[10px] rounded-full uppercase">Ranked
+                                        Scrimmage</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Match Card 3 (Win) -->
+                    <div
+                        class="bg-white rounded-2xl overflow-hidden shadow-xl border border-slate-200 flex flex-col md:flex-row transition-transform hover:translate-y-[-4px]">
+                        <div class="bg-orange-600 md:w-3 flex items-center justify-center"></div>
+                        <div class="flex-1 p-6 md:p-8 flex flex-col md:flex-row items-center gap-8">
+                            <div class="flex flex-col items-center gap-2">
+                                <div
+                                    class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-4xl">
+                                    🎾
+                                </div>
+                                <span
+                                    class="px-3 py-1 bg-orange-100 text-orange-700 font-label-bold text-[10px] uppercase rounded-full tracking-widest">Victory</span>
+                            </div>
+                            <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8 items-center w-full">
+                                <div class="text-center md:text-right">
+                                    <div class="font-headline-md text-slate-900 mb-1">Marcus Thorne</div>
+                                    <div class="flex md:justify-end items-center gap-2">
+                                        <span class="text-slate-500 font-body-md">Sarah Jenkins</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="font-display-stat text-orange-600 text-5xl mb-2 italic">2 - 1</div>
+                                    <div class="flex gap-2">
+                                        <span
+                                            class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S1:
+                                            21-14</span>
+                                        <span
+                                            class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S2:
+                                            12-21</span>
+                                        <span
+                                            class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S3:
+                                            21-19</span>
+                                    </div>
+                                </div>
+                                <div class="text-center md:text-left">
+                                    <div class="font-headline-md text-slate-400 mb-1">James Wilson</div>
+                                    <div class="flex md:justify-start items-center gap-2">
+                                        <span class="text-slate-400 font-body-md">Emma Watt</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                class="border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8 flex flex-col gap-3 min-w-[200px]">
+                                <div class="flex items-center gap-2 text-slate-500">
+                                    <span class="material-symbols-outlined text-orange-600 text-lg">location_on</span>
+                                    <span class="font-body-md">Downtown Arena</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-slate-500">
+                                    <span
+                                        class="material-symbols-outlined text-orange-600 text-lg">calendar_today</span>
+                                    <span class="font-body-md">Oct 05, 2023 • 17:00</span>
+                                </div>
+                                <div class="mt-2">
+                                    <span
+                                        class="px-3 py-1 bg-slate-100 text-slate-600 font-label-bold text-[10px] rounded-full uppercase">Elite
+                                        Doubles</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Match Card 3 (Win) -->
-                <div
-                    class="bg-white rounded-2xl overflow-hidden shadow-xl border border-slate-200 flex flex-col md:flex-row transition-transform hover:translate-y-[-4px]">
-                    <div class="bg-orange-600 md:w-3 flex items-center justify-center"></div>
-                    <div class="flex-1 p-6 md:p-8 flex flex-col md:flex-row items-center gap-8">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-4xl">
-                                🎾
-                            </div>
-                            <span
-                                class="px-3 py-1 bg-orange-100 text-orange-700 font-label-bold text-[10px] uppercase rounded-full tracking-widest">Victory</span>
-                        </div>
-                        <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8 items-center w-full">
-                            <div class="text-center md:text-right">
-                                <div class="font-headline-md text-slate-900 mb-1">Marcus Thorne</div>
-                                <div class="flex md:justify-end items-center gap-2">
-                                    <span class="text-slate-500 font-body-md">Sarah Jenkins</span>
-                                </div>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <div class="font-display-stat text-orange-600 text-5xl mb-2 italic">2 - 1</div>
-                                <div class="flex gap-2">
-                                    <span
-                                        class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S1:
-                                        21-14</span>
-                                    <span
-                                        class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S2:
-                                        12-21</span>
-                                    <span
-                                        class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S3:
-                                        21-19</span>
-                                </div>
-                            </div>
-                            <div class="text-center md:text-left">
-                                <div class="font-headline-md text-slate-400 mb-1">James Wilson</div>
-                                <div class="flex md:justify-start items-center gap-2">
-                                    <span class="text-slate-400 font-body-md">Emma Watt</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div
-                            class="border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8 flex flex-col gap-3 min-w-[200px]">
-                            <div class="flex items-center gap-2 text-slate-500">
-                                <span class="material-symbols-outlined text-orange-600 text-lg">location_on</span>
-                                <span class="font-body-md">Downtown Arena</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-slate-500">
-                                <span class="material-symbols-outlined text-orange-600 text-lg">calendar_today</span>
-                                <span class="font-body-md">Oct 05, 2023 • 17:00</span>
-                            </div>
-                            <div class="mt-2">
-                                <span
-                                    class="px-3 py-1 bg-slate-100 text-slate-600 font-label-bold text-[10px] rounded-full uppercase">Elite
-                                    Doubles</span>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Load More -->
+                <div class="mt-12 flex justify-center">
+                    <button
+                        class="flex items-center gap-3 text-slate-400 hover:text-orange-500 transition-all font-label-bold py-4 px-10 rounded-2xl border-2 border-slate-800 hover:border-orange-500/50">
+                        Show More History
+                        <span class="material-symbols-outlined">expand_more</span>
+                    </button>
                 </div>
             </div>
-            <!-- Load More -->
-            <div class="mt-12 flex justify-center">
-                <button
-                    class="flex items-center gap-3 text-slate-400 hover:text-orange-500 transition-all font-label-bold py-4 px-10 rounded-2xl border-2 border-slate-800 hover:border-orange-500/50">
-                    Show More History
-                    <span class="material-symbols-outlined">expand_more</span>
-                </button>
-            </div>
-        </div>
-        <!-- Footer -->
-        <footer class="mt-auto p-8 border-t border-slate-800 text-center">
-            <p class="text-slate-500 font-body-md text-sm">© 2023 PICKLEPRO PERFORMANCE SYSTEMS. ALL RIGHTS RESERVED.
-            </p>
-        </footer>
-    </main>
-    <!-- BottomNavBar for Mobile (Visibility managed by component rules) -->
-    <nav
-        class="md:hidden fixed bottom-0 w-full z-50 rounded-t-2xl bg-slate-900 border-t border-slate-800 shadow-[0_-4px_10px_rgba(15,23,42,0.05)] flex justify-around items-center h-16 px-6 pb-safe">
-        <a class="flex flex-col items-center justify-center text-slate-400" href="#">
-            <span class="material-symbols-outlined">home</span>
-            <span class="font-lexend text-[10px] uppercase font-black">Home</span>
-        </a>
-        <a class="flex flex-col items-center justify-center text-slate-400" href="#">
-            <span class="material-symbols-outlined">groups</span>
-            <span class="font-lexend text-[10px] uppercase font-black">Community</span>
-        </a>
-        <a class="flex flex-col items-center justify-center text-orange-500 scale-110" href="#">
-            <span class="material-symbols-outlined" data-weight="fill"
-                style="font-variation-settings: 'FILL' 1;">leaderboard</span>
-            <span class="font-lexend text-[10px] uppercase font-black">Scores</span>
-        </a>
-        <a class="flex flex-col items-center justify-center text-slate-400" href="#">
-            <span class="material-symbols-outlined">person</span>
-            <span class="font-lexend text-[10px] uppercase font-black">Profile</span>
-        </a>
-    </nav>
+        </main>
+        <!-- BottomNavBar (Mobile Only) -->
+        <nav
+            class="md:hidden fixed bottom-0 w-full z-50 rounded-t-2xl bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-[0_-4px_10px_rgba(15,23,42,0.05)] flex justify-around items-center h-16 px-6 pb-safe">
+            <a class="flex flex-col items-center justify-center text-orange-600 dark:text-orange-500 scale-110"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="home">home</span>
+                <span class="font-lexend text-[10px] uppercase font-black">Home</span>
+            </a>
+            <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 active:bg-slate-50 dark:active:bg-slate-800"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="groups">groups</span>
+                <span class="font-lexend text-[10px] uppercase font-black">Community</span>
+            </a>
+            <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 active:bg-slate-50 dark:active:bg-slate-800"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+                <span class="font-lexend text-[10px] uppercase font-black">Scores</span>
+            </a>
+            <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 active:bg-slate-50 dark:active:bg-slate-800"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="person">person</span>
+                <span class="font-lexend text-[10px] uppercase font-black">Profile</span>
+            </a>
+        </nav>
+    </div>
 </body>
+<script type="module" src="js/index.js"></script>
+<script type="module" src="js/record-match.js"></script>
 
 </html>
