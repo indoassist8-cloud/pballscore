@@ -243,15 +243,12 @@
                     <div
                         class="lg:col-span-3 flex items-center gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 self-start">
                         <button
-                            class="px-8 py-3 rounded-xl font-label-bold text-white bg-slate-800 shadow-sm transition-all"
-                            data-filter="all">All
+                            class="px-8 py-3 rounded-xl font-label-bold text-white bg-slate-800 shadow-sm transition-all">All
                             Matches</button>
                         <button
-                            class="px-8 py-3 rounded-xl font-label-bold text-slate-400 hover:text-white transition-all"
-                            data-filter="wins">Wins</button>
+                            class="px-8 py-3 rounded-xl font-label-bold text-slate-400 hover:text-white transition-all">Wins</button>
                         <button
-                            class="px-8 py-3 rounded-xl font-label-bold text-slate-400 hover:text-white transition-all"
-                            data-filter="losses">Losses</button>
+                            class="px-8 py-3 rounded-xl font-label-bold text-slate-400 hover:text-white transition-all">Losses</button>
                     </div>
                     <!-- Quick Stats -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex justify-around items-center">
@@ -272,18 +269,208 @@
                     </div>
                 </div>
                 <!-- Match Cards List -->
-                <!-- Filter tabs
-                <div class="flex border-b border-slate-200 mb-6 gap-6">
-                    <button class="match-filter-btn tab-active pb-2 text-sm font-semibold"
-                        data-filter="all">All</button>
-                    <button class="match-filter-btn pb-2 text-sm font-semibold text-slate-400"
-                        data-filter="wins">Wins</button>
-                    <button class="match-filter-btn pb-2 text-sm font-semibold text-slate-400"
-                        data-filter="losses">Losses</button>
+                <div class="space-y-6">
+                    <!-- Match Card 1 (Win) -->
+                    <div
+                        class="bg-white rounded-2xl overflow-hidden shadow-xl border border-slate-200 flex flex-col md:flex-row transition-transform hover:translate-y-[-4px]">
+                        <!-- Winner Highlight Ribbon -->
+                        <div class="bg-orange-600 md:w-3 flex items-center justify-center">
+                            <div class="hidden md:block w-full h-full bg-orange-600"></div>
+                        </div>
+                        <div class="flex-1 p-6 md:p-8 flex flex-col md:flex-row items-center gap-8">
+                            <!-- Sport Icon & Status -->
+                            <div class="flex flex-col items-center gap-2">
+                                <div
+                                    class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-4xl shadow-inner">
+                                    🎾
+                                </div>
+                                <span
+                                    class="px-3 py-1 bg-orange-100 text-orange-700 font-label-bold text-[10px] uppercase rounded-full tracking-widest">Victory</span>
+                            </div>
+                            <!-- Match Detail -->
+                            <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8 items-center w-full">
+                                <!-- Team A -->
+                                <div class="text-center md:text-right">
+                                    <div class="font-headline-md text-slate-900 mb-1">Marcus Thorne</div>
+                                    <div class="flex md:justify-end items-center gap-2">
+                                        <span class="text-slate-500 font-body-md">Alex Rivera</span>
+                                        <span
+                                            class="px-2 py-0.5 bg-slate-100 text-slate-500 font-label-bold text-[10px] rounded uppercase">Guest</span>
+                                    </div>
+                                </div>
+                                <!-- Score Center -->
+                                <div class="flex flex-col items-center">
+                                    <div class="font-display-stat text-orange-600 text-5xl mb-2 italic">2 - 0</div>
+                                    <div class="flex gap-2">
+                                        <span
+                                            class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S1:
+                                            21-12</span>
+                                        <span
+                                            class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S2:
+                                            21-18</span>
+                                    </div>
+                                </div>
+                                <!-- Team B -->
+                                <div class="text-center md:text-left">
+                                    <div class="font-headline-md text-slate-400 mb-1">David Chen</div>
+                                    <div class="flex md:justify-start items-center gap-2">
+                                        <span class="text-slate-400 font-body-md">Sarah Jenkins</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Meta Info -->
+                            <div
+                                class="border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8 flex flex-col gap-3 min-w-[200px]">
+                                <div class="flex items-center gap-2 text-slate-500">
+                                    <span class="material-symbols-outlined text-orange-600 text-lg">location_on</span>
+                                    <span class="font-body-md">Elite Paddle Club</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-slate-500">
+                                    <span
+                                        class="material-symbols-outlined text-orange-600 text-lg">calendar_today</span>
+                                    <span class="font-body-md">Oct 12, 2023 • 18:30</span>
+                                </div>
+                                <div class="mt-2">
+                                    <span
+                                        class="px-3 py-1 bg-slate-100 text-slate-600 font-label-bold text-[10px] rounded-full uppercase">Tournament
+                                        Finals</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Match Card 2 (Loss) -->
+                    <div
+                        class="bg-white/95 rounded-2xl overflow-hidden shadow-lg border border-slate-200 flex flex-col md:flex-row transition-transform hover:translate-y-[-4px]">
+                        <!-- Loser Highlight Ribbon -->
+                        <div class="bg-slate-200 md:w-3 flex items-center justify-center">
+                            <div class="hidden md:block w-full h-full bg-slate-200"></div>
+                        </div>
+                        <div class="flex-1 p-6 md:p-8 flex flex-col md:flex-row items-center gap-8">
+                            <!-- Sport Icon & Status -->
+                            <div class="flex flex-col items-center gap-2">
+                                <div
+                                    class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-4xl grayscale opacity-70">
+                                    🎾
+                                </div>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 text-slate-500 font-label-bold text-[10px] uppercase rounded-full tracking-widest">Defeat</span>
+                            </div>
+                            <!-- Match Detail -->
+                            <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8 items-center w-full">
+                                <!-- Team A -->
+                                <div class="text-center md:text-right">
+                                    <div class="font-headline-md text-slate-400 mb-1">Marcus Thorne</div>
+                                    <div class="flex md:justify-end items-center gap-2">
+                                        <span class="text-slate-400 font-body-md">Guest Player</span>
+                                        <span
+                                            class="px-2 py-0.5 bg-slate-100 text-slate-400 font-label-bold text-[10px] rounded uppercase">Guest</span>
+                                    </div>
+                                </div>
+                                <!-- Score Center -->
+                                <div class="flex flex-col items-center">
+                                    <div class="font-display-stat text-slate-400 text-5xl mb-2 italic">1 - 2</div>
+                                    <div class="flex gap-2">
+                                        <span
+                                            class="px-3 py-1 bg-slate-200 text-slate-600 font-label-bold text-xs rounded-lg">S1:
+                                            19-21</span>
+                                        <span
+                                            class="px-3 py-1 bg-orange-600 text-white font-label-bold text-xs rounded-lg">S2:
+                                            21-15</span>
+                                        <span
+                                            class="px-3 py-1 bg-slate-200 text-slate-600 font-label-bold text-xs rounded-lg">S3:
+                                            18-21</span>
+                                    </div>
+                                </div>
+                                <!-- Team B (Winner) -->
+                                <div class="text-center md:text-left">
+                                    <div class="font-headline-md text-slate-900 mb-1">Leo Rodriguez</div>
+                                    <div
+                                        class="flex md:justify-start items-center gap-2 text-orange-600 font-label-bold text-sm">
+                                        <span>Winner</span>
+                                        <span class="material-symbols-outlined text-sm">verified</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Meta Info -->
+                            <div
+                                class="border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8 flex flex-col gap-3 min-w-[200px]">
+                                <div class="flex items-center gap-2 text-slate-500">
+                                    <span class="material-symbols-outlined text-slate-400 text-lg">location_on</span>
+                                    <span class="font-body-md">Sunset Courts</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-slate-500">
+                                    <span class="material-symbols-outlined text-slate-400 text-lg">calendar_today</span>
+                                    <span class="font-body-md">Oct 08, 2023 • 20:00</span>
+                                </div>
+                                <div class="mt-2">
+                                    <span
+                                        class="px-3 py-1 bg-slate-100 text-slate-500 font-label-bold text-[10px] rounded-full uppercase">Ranked
+                                        Scrimmage</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Match Card 3 (Win) -->
+                    <div
+                        class="bg-white rounded-2xl overflow-hidden shadow-xl border border-slate-200 flex flex-col md:flex-row transition-transform hover:translate-y-[-4px]">
+                        <div class="bg-orange-600 md:w-3 flex items-center justify-center"></div>
+                        <div class="flex-1 p-6 md:p-8 flex flex-col md:flex-row items-center gap-8">
+                            <div class="flex flex-col items-center gap-2">
+                                <div
+                                    class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-4xl">
+                                    🎾
+                                </div>
+                                <span
+                                    class="px-3 py-1 bg-orange-100 text-orange-700 font-label-bold text-[10px] uppercase rounded-full tracking-widest">Victory</span>
+                            </div>
+                            <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8 items-center w-full">
+                                <div class="text-center md:text-right">
+                                    <div class="font-headline-md text-slate-900 mb-1">Marcus Thorne</div>
+                                    <div class="flex md:justify-end items-center gap-2">
+                                        <span class="text-slate-500 font-body-md">Sarah Jenkins</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="font-display-stat text-orange-600 text-5xl mb-2 italic">2 - 1</div>
+                                    <div class="flex gap-2">
+                                        <span
+                                            class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S1:
+                                            21-14</span>
+                                        <span
+                                            class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S2:
+                                            12-21</span>
+                                        <span
+                                            class="px-3 py-1 bg-slate-900 text-white font-label-bold text-xs rounded-lg">S3:
+                                            21-19</span>
+                                    </div>
+                                </div>
+                                <div class="text-center md:text-left">
+                                    <div class="font-headline-md text-slate-400 mb-1">James Wilson</div>
+                                    <div class="flex md:justify-start items-center gap-2">
+                                        <span class="text-slate-400 font-body-md">Emma Watt</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                class="border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8 flex flex-col gap-3 min-w-[200px]">
+                                <div class="flex items-center gap-2 text-slate-500">
+                                    <span class="material-symbols-outlined text-orange-600 text-lg">location_on</span>
+                                    <span class="font-body-md">Downtown Arena</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-slate-500">
+                                    <span
+                                        class="material-symbols-outlined text-orange-600 text-lg">calendar_today</span>
+                                    <span class="font-body-md">Oct 05, 2023 • 17:00</span>
+                                </div>
+                                <div class="mt-2">
+                                    <span
+                                        class="px-3 py-1 bg-slate-100 text-slate-600 font-label-bold text-[10px] rounded-full uppercase">Elite
+                                        Doubles</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
- -->
-                <!-- Match cards render here -->
-                <div id="matchList"></div>
                 <!-- Load More -->
                 <div class="mt-12 flex justify-center">
                     <button
@@ -322,6 +509,5 @@
 </body>
 <script type="module" src="js/index.js"></script>
 <script type="module" src="js/record-match.js"></script>
-<script type="module" src="js/match.js"></script>
 
 </html>
