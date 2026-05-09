@@ -446,6 +446,7 @@ function resetState() {
         b.classList.toggle("bg-slate-800", !active);
         b.classList.toggle("text-slate-300", !active);
         b.classList.toggle("border-slate-700", !active);
+        b.classList.toggle("shadow-orange-900/20", !active);
     });
 
     // Reset format buttons to Singles
