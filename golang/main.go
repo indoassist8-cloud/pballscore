@@ -147,6 +147,7 @@ type CreateMatchRequest struct {
 	Location     string             `json:"location"`
 	Participants []MatchParticipant `json:"participants"`
 	Sets         []SetScore         `json:"sets"`
+	RecordedBy   string             `json:"recorded_by"`
 }
 
 // CreateMatchResponse is returned on success.
@@ -454,8 +455,8 @@ func CreateMatchHandler(db *sql.DB) http.HandlerFunc {
 		}
 
 		res, err := tx.Exec(
-			`INSERT INTO matches (sport_type_id, community_id, location) VALUES (?, ?, ?)`,
-			req.SportTypeID, communityVal, req.Location,
+			`INSERT INTO matches (sport_type_id, community_id, location, recorded_by) VALUES (?, ?, ?, ?)`,
+			req.SportTypeID, communityVal, req.Location, req.RecordedBy,
 		)
 		if err != nil {
 			log.Printf("insert match: %v", err)
@@ -676,10 +677,12 @@ func ListUserMatchesHandler(db *sql.DB) http.HandlerFunc {
 				   FROM match_results mr
 				   JOIN matches m     ON m.id  = mr.match_id
 				   JOIN sport_types st ON st.id = m.sport_type_id
-				  WHERE mr.user_id = ?
-				  ORDER BY m.match_date DESC
+				  	WHERE (m.recorded_by = ?        -- matches YOU recorded (guest or member)
+						OR mr.user_id    = ? )       -- matches where YOU are a registered participant
+					GROUP BY m.id, mr.team_identifier, mr.score, mr.is_winner
+					ORDER BY m.match_date DESC
 				  LIMIT ?`,
-			userID, limit,
+			userID, userID, limit,
 		)
 		if err != nil {
 			log.Printf("ListUserMatches query: %v", err)

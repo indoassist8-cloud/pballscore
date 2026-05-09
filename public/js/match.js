@@ -38,7 +38,12 @@ function buildMatchCard(match) {
     const teamA = match.teams?.A ?? [];
     const teamB = match.teams?.B ?? [];
     const winner = match.winner; // "A" or "B"
-    const isWin = winner === "A"; // assumes current user is always Team A side
+    // ── Determine which team the current user is on ──────────────
+    const userInA = teamA.some(p => p.user_id === CURRENT_USER_ID);
+    const userInB = teamB.some(p => p.user_id === CURRENT_USER_ID);
+    // If neither (all-guest match recorded by user), treat Team A as "our" side
+    const myTeam = userInA ? "A" : userInB ? "B" : "A";
+    const isWin = winner === myTeam;
     const sets = match.sets ?? [];
     const emoji = SPORT_EMOJI[match.sport_type] ?? "🏆";
 

@@ -341,6 +341,7 @@ function buildPayload() {
                     team_identifier: team,
                     score: setsWon,
                     is_winner: isWinner,
+                    recorded_by: CURRENT_USER_ID,
                 });
             } else {
                 participants.push({
@@ -349,6 +350,7 @@ function buildPayload() {
                     team_identifier: team,
                     score: setsWon,
                     is_winner: isWinner,
+                    recorded_by: CURRENT_USER_ID,
                 });
             }
         }
