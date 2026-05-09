@@ -22,7 +22,7 @@ function formatDate(iso) {
 
 function playerName(p) {
     // p has either username (registered) or guest_name (guest)
-    if (p.username) return { name: p.username, isGuest: false };
+    if (p.fullname) return { name: p.fullname, isGuest: false };
     if (p.guest_name) return { name: p.guest_name, isGuest: true };
     return { name: "Unknown", isGuest: false };
 }

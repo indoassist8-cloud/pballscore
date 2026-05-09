@@ -172,7 +172,7 @@ type GetMatchResponse struct {
 
 type TeamMember struct {
 	UserID    *string `json:"user_id"`    // pointer = nullable
-	Username  *string `json:"username"`   // pointer = nullable
+	Fullname  *string `json:"fullname"`   // pointer = nullable
 	GuestName *string `json:"guest_name"` // only for guests
 	Score     int     `json:"score"`
 	IsWinner  bool    `json:"is_winner"`
@@ -222,8 +222,9 @@ func main() {
 	// 3. Register routes
 	r.HandleFunc("/api/signup", signupHandler).Methods("POST", "OPTIONS")
 	r.HandleFunc("/api/matches", CreateMatchHandler(db)).Methods("POST", "OPTIONS")
-	// Add this line with your other r.HandleFunc lines
 	r.HandleFunc("/api/matches", ListUserMatchesHandler(db)).Methods("GET", "OPTIONS")
+	// Get single match detail (GET /api/matches/{id})
+	r.HandleFunc("/api/matches/{id}", GetMatchHandler(db)).Methods("GET", "OPTIONS")
 	// handler for community
 	RegisterCommunityRoutes(r, db)
 
@@ -548,7 +549,9 @@ func GetMatchHandler(db *sql.DB) http.HandlerFunc {
 		}
 
 		// Extract match ID from path  /matches/{id}
-		idStr := r.PathValue("id") // Go 1.22+ net/http path params
+		//idStr := r.PathValue("id") // Go 1.22+ net/http path params
+		vars := mux.Vars(r)
+		idStr := vars["id"]
 		if idStr == "" {
 			writeError(w, http.StatusBadRequest, "match id is required")
 			return
@@ -586,9 +589,9 @@ func GetMatchHandler(db *sql.DB) http.HandlerFunc {
 
 		// ── Fetch participants ─────────────────────────────────────────
 		rows, err := db.Query(
-			`SELECT mr.user_id, u.username, mr.guest_name, mr.team_identifier, mr.score, mr.is_winner
+			`SELECT mr.user_id, u.fullname, mr.guest_name, mr.team_identifier, mr.score, mr.is_winner
 			FROM match_results mr
-			LEFT JOIN users u ON u.firebase_uid = mr.user_id  -- LEFT JOIN so guests still appear
+			LEFT JOIN users u ON u.firebase_uid = mr.user_id
 			WHERE mr.match_id = ?`,
 			matchID,
 		)
@@ -627,7 +630,7 @@ func GetMatchHandler(db *sql.DB) http.HandlerFunc {
 		for rows.Next() {
 			var m TeamMember
 			var team string
-			if err = rows.Scan(&m.UserID, &m.Username, &m.GuestName, &team, &m.Score, &m.IsWinner); err != nil {
+			if err = rows.Scan(&m.UserID, &m.Fullname, &m.GuestName, &team, &m.Score, &m.IsWinner); err != nil {
 				log.Printf("scan participant: %v", err)
 				writeError(w, http.StatusInternalServerError, "database error")
 				return
