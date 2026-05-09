@@ -37,7 +37,7 @@ const state = {
 
 // ─── DOM refs ──────────────────────────────────────────────────────────────────
 const modal = document.getElementById("matchModal");
-const backdrop = document.getElementById("modalBackdrop");
+//const backdrop = document.getElementById("modalBackdrop");
 const closeBtn = document.getElementById("closeModalBtn");
 const openBtn = document.getElementById("recordMatchBtn");
 const submitBtn = document.getElementById("submitMatchBtn");
@@ -470,12 +470,12 @@ function setFormat(isDoubles) {
     state.isDoubles = isDoubles;
 
     fmtSingles.className = `fmt-btn px-4 py-2 rounded-xl font-label-bold transition-all border flex-1 ${!isDoubles
-            ? "bg-orange-600 text-white border-orange-500 shadow-lg shadow-orange-900/20"
-            : "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
+        ? "bg-orange-600 text-white border-orange-500 shadow-lg shadow-orange-900/20"
+        : "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
         }`;
     fmtDoubles.className = `fmt-btn px-4 py-2 rounded-xl font-label-bold transition-all border flex-1 ${isDoubles
-            ? "bg-orange-600 text-white border-orange-500 shadow-lg shadow-orange-900/20"
-            : "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
+        ? "bg-orange-600 text-white border-orange-500 shadow-lg shadow-orange-900/20"
+        : "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
         }`;
 
     renderPlayers();
@@ -492,6 +492,8 @@ submitBtn?.addEventListener("click", submitMatch);
 // Format
 fmtSingles?.addEventListener("click", () => setFormat(false));
 fmtDoubles?.addEventListener("click", () => setFormat(true));
+
+document.querySelector("#matchModal > div").addEventListener("click", (e) => e.stopPropagation());
 
 // Sport selector (event delegation)
 document.getElementById("sportSelector")?.addEventListener("click", (e) => {

@@ -319,227 +319,223 @@
             </a>
         </nav>
     </div>
-    <div class="fixed inset-0 z-[60] bg-on-primary-fixed/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <!-- RECORD MATCH MODAL -->
-        <div
-            class="w-full max-w-2xl bg-on-primary-fixed rounded-2xl shadow-2xl overflow-hidden border border-slate-800 transform scale-100 transition-transform">
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between px-8 py-6 border-b border-slate-800">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center">
-                        <span class="material-symbols-outlined text-white" data-icon="history_edu">history_edu</span>
-                    </div>
-                    <h1 class="text-white font-headline-md">Record Match</h1>
+    <div id="matchModal"
+        class="hidden fixed inset-0 z-[60] bg-on-primary-fixed/80 backdrop-blur-sm flex items-center justify-center p-4">
+    </div>
+    <!-- RECORD MATCH MODAL -->
+    <div
+        class="w-full max-w-2xl bg-on-primary-fixed rounded-2xl shadow-2xl overflow-hidden border border-slate-800 transform scale-100 transition-transform">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between px-8 py-6 border-b border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white" data-icon="history_edu">history_edu</span>
                 </div>
-                <button class="text-slate-400 hover:text-white transition-colors">
-                    <span class="material-symbols-outlined" data-icon="close">close</span>
-                </button>
+                <h1 class="text-white font-headline-md">Record Match</h1>
             </div>
-            <!-- Modal Body -->
-            <div class="px-8 py-6 space-y-8 max-h-[716px] overflow-y-auto custom-scrollbar">
-                <!-- Sport & Format Selection -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-3">
-                        <label class="text-slate-400 font-label-bold uppercase text-[11px] tracking-widest">Select
-                            Sport</label>
-                        <div class="flex flex-wrap gap-2">
-                            <button
-                                class="px-4 py-2 rounded-xl bg-orange-600 text-white font-label-bold transition-all border border-orange-500 shadow-lg shadow-orange-900/20">Pickleball</button>
-                            <button
-                                class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-label-bold hover:bg-slate-700 transition-all border border-slate-700">Padel</button>
-                            <button
-                                class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-label-bold hover:bg-slate-700 transition-all border border-slate-700">Badminton</button>
-                        </div>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="text-slate-400 font-label-bold uppercase text-[11px] tracking-widest">Match
-                            Format</label>
-                        <div class="flex gap-2">
-                            <button
-                                class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-label-bold hover:bg-slate-700 transition-all border border-slate-700 flex-1">Singles</button>
-                            <button
-                                class="px-4 py-2 rounded-xl bg-orange-600 text-white font-label-bold transition-all border border-orange-500 flex-1 shadow-lg shadow-orange-900/20">Doubles</button>
-                        </div>
+            <button class="text-slate-400 hover:text-white transition-colors">
+                <span class="material-symbols-outlined" data-icon="close">close</span>
+            </button>
+        </div>
+        <!-- Modal Body -->
+        <div class="px-8 py-6 space-y-8 max-h-[716px] overflow-y-auto custom-scrollbar">
+            <!-- Sport & Format Selection -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                    <label class="text-slate-400 font-label-bold uppercase text-[11px] tracking-widest">Select
+                        Sport</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button
+                            class="px-4 py-2 rounded-xl bg-orange-600 text-white font-label-bold transition-all border border-orange-500 shadow-lg shadow-orange-900/20">Pickleball</button>
+                        <button
+                            class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-label-bold hover:bg-slate-700 transition-all border border-slate-700">Padel</button>
+                        <button
+                            class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-label-bold hover:bg-slate-700 transition-all border border-slate-700">Badminton</button>
                     </div>
                 </div>
-                <!-- Location -->
                 <div class="space-y-3">
                     <label class="text-slate-400 font-label-bold uppercase text-[11px] tracking-widest">Match
-                        Location</label>
-                    <div class="relative">
-                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
-                            data-icon="location_on">location_on</span>
-                        <input id="matchLocation"
-                            class="w-full bg-slate-900 border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white font-body-md focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
-                            placeholder="e.g., Riverside Elite Courts" type="text" />
+                        Format</label>
+                    <div class="flex gap-2">
+                        <button
+                            class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-label-bold hover:bg-slate-700 transition-all border border-slate-700 flex-1">Singles</button>
+                        <button
+                            class="px-4 py-2 rounded-xl bg-orange-600 text-white font-label-bold transition-all border border-orange-500 flex-1 shadow-lg shadow-orange-900/20">Doubles</button>
                     </div>
-                </div>
-                <!-- Scoreboard Section -->
-                <div class="space-y-4">
-                    <label class="text-slate-400 font-label-bold uppercase text-[11px] tracking-widest">Match
-                        Lineup</label>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Team A -->
-                        <div
-                            class="bg-slate-900 p-5 rounded-2xl border border-slate-800 relative overflow-hidden group">
-                            <div class="absolute top-0 left-0 w-1 h-full bg-orange-600"></div>
-                            <h3 class="text-white font-label-bold mb-4 flex items-center gap-2">
-                                Team A <span
-                                    class="text-[10px] bg-orange-600/10 text-orange-500 px-2 py-0.5 rounded-full">HOME</span>
-                            </h3>
-                            <div class="space-y-4">
-                                <!-- Player 1 -->
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-500">
-                                            <span class="material-symbols-outlined text-sm"
-                                                data-icon="person">person</span>
-                                        </div>
-                                        <span class="text-white text-sm">Marcus Chen</span>
-                                    </div>
-                                    <label class="flex items-center cursor-pointer">
-                                        <span class="text-[10px] text-slate-500 mr-2 uppercase font-bold">Member</span>
-                                        <div class="relative w-8 h-4 bg-orange-600 rounded-full transition-colors">
-                                            <div
-                                                class="absolute right-0.5 top-0.5 bg-white w-3 h-3 rounded-full shadow-sm">
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                                <!-- Player 2 -->
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 border border-dashed border-slate-600">
-                                            <span class="material-symbols-outlined text-sm" data-icon="add">add</span>
-                                        </div>
-                                        <span class="text-slate-500 text-sm">Add Partner</span>
-                                    </div>
-                                    <label class="flex items-center cursor-pointer">
-                                        <span class="text-[10px] text-slate-500 mr-2 uppercase font-bold">Member</span>
-                                        <div class="relative w-8 h-4 bg-slate-700 rounded-full transition-colors">
-                                            <div
-                                                class="absolute left-0.5 top-0.5 bg-slate-400 w-3 h-3 rounded-full shadow-sm">
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Team B -->
-                        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 relative overflow-hidden">
-                            <div class="absolute top-0 left-0 w-1 h-full bg-slate-600"></div>
-                            <h3 class="text-white font-label-bold mb-4 flex items-center gap-2">
-                                Team B <span
-                                    class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full">AWAY</span>
-                            </h3>
-                            <div class="space-y-4">
-                                <!-- Player 1 -->
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-500">
-                                            <span class="material-symbols-outlined text-sm"
-                                                data-icon="person">person</span>
-                                        </div>
-                                        <input
-                                            class="bg-transparent border-none p-0 text-white text-sm focus:ring-0 w-24"
-                                            placeholder="Search Player..." type="text" />
-                                    </div>
-                                    <label class="flex items-center cursor-pointer">
-                                        <span class="text-[10px] text-slate-500 mr-2 uppercase font-bold">Member</span>
-                                        <div class="relative w-8 h-4 bg-slate-700 rounded-full transition-colors">
-                                            <div
-                                                class="absolute left-0.5 top-0.5 bg-slate-400 w-3 h-3 rounded-full shadow-sm">
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                                <!-- Player 2 -->
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 border border-dashed border-slate-600">
-                                            <span class="material-symbols-outlined text-sm" data-icon="add">add</span>
-                                        </div>
-                                        <span class="text-slate-500 text-sm italic">Guest Player</span>
-                                    </div>
-                                    <label class="flex items-center cursor-pointer">
-                                        <span class="text-[10px] text-slate-500 mr-2 uppercase font-bold">Member</span>
-                                        <div class="relative w-8 h-4 bg-slate-700 rounded-full transition-colors">
-                                            <div
-                                                class="absolute left-0.5 top-0.5 bg-slate-400 w-3 h-3 rounded-full shadow-sm">
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Set Scoring -->
-                <div class="space-y-4 bg-slate-900/50 p-6 rounded-2xl border border-slate-800/50">
-                    <div class="flex items-center justify-between">
-                        <label class="text-slate-400 font-label-bold uppercase text-[11px] tracking-widest">Match
-                            Sets</label>
-                        <div class="flex gap-16 pr-4">
-                            <span class="text-[10px] text-slate-500 font-black uppercase">Team A</span>
-                            <span class="text-[10px] text-slate-500 font-black uppercase">Team B</span>
-                        </div>
-                    </div>
-                    <!-- Set Rows -->
-                    <div class="space-y-3" id="setsContainer">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 text-slate-500 font-black text-xs">SET 1</div>
-                            <div class="flex-1 flex gap-4">
-                                <input
-                                    class="w-full bg-slate-900 border-slate-700 rounded-lg text-center text-orange-500 font-display-stat text-2xl py-1 focus:border-orange-500 focus:ring-0"
-                                    type="number" value="11" />
-                                <input
-                                    class="w-full bg-slate-900 border-slate-700 rounded-lg text-center text-white font-display-stat text-2xl py-1 focus:border-orange-500 focus:ring-0"
-                                    type="number" value="8" />
-                            </div>
-                            <button class="text-slate-600 hover:text-error transition-colors">
-                                <span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
-                            </button>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 text-slate-500 font-black text-xs">SET 2</div>
-                            <div class="flex-1 flex gap-4">
-                                <input
-                                    class="w-full bg-slate-900 border-slate-700 rounded-lg text-center text-orange-500 font-display-stat text-2xl py-1 focus:border-orange-500 focus:ring-0"
-                                    type="number" value="11" />
-                                <input
-                                    class="w-full bg-slate-900 border-slate-700 rounded-lg text-center text-white font-display-stat text-2xl py-1 focus:border-orange-500 focus:ring-0"
-                                    type="number" value="4" />
-                            </div>
-                            <button class="text-slate-600 hover:text-error transition-colors">
-                                <span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
-                            </button>
-                        </div>
-                    </div>
-                    <button id="addSetBtn"
-                        class="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-700 rounded-xl text-slate-500 hover:text-white hover:border-slate-500 hover:bg-slate-800 transition-all font-label-bold group">
-                        <span class="material-symbols-outlined text-sm group-hover:rotate-90 transition-transform"
-                            data-icon="add">add</span>
-                        Add Set
-                    </button>
                 </div>
             </div>
-            <!-- Modal Footer -->
-            <div id="matchError"></div>
-            <div class="px-8 py-6 border-t border-slate-800 bg-slate-900/30 flex items-center justify-end gap-4">
-                <button id="discardMatchBtn"
-                    class="px-6 py-3 text-slate-400 font-label-bold hover:text-white transition-colors">Discard</button>
-                <button
-                    class="px-8 py-3 bg-orange-600 text-white font-label-bold rounded-xl shadow-lg shadow-orange-900/30 hover:bg-orange-500 active:scale-95 transform transition-all flex items-center gap-2">
-                    <span class="material-symbols-outlined" data-icon="check_circle"
-                        data-weight="fill">check_circle</span>
-                    Save Match Result
+            <!-- Location -->
+            <div class="space-y-3">
+                <label class="text-slate-400 font-label-bold uppercase text-[11px] tracking-widest">Match
+                    Location</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
+                        data-icon="location_on">location_on</span>
+                    <input id="matchLocation"
+                        class="w-full bg-slate-900 border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white font-body-md focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
+                        placeholder="e.g., Riverside Elite Courts" type="text" />
+                </div>
+            </div>
+            <!-- Scoreboard Section -->
+            <div class="space-y-4">
+                <label class="text-slate-400 font-label-bold uppercase text-[11px] tracking-widest">Match
+                    Lineup</label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Team A -->
+                    <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-orange-600"></div>
+                        <h3 class="text-white font-label-bold mb-4 flex items-center gap-2">
+                            Team A <span
+                                class="text-[10px] bg-orange-600/10 text-orange-500 px-2 py-0.5 rounded-full">HOME</span>
+                        </h3>
+                        <div class="space-y-4">
+                            <!-- Player 1 -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-500">
+                                        <span class="material-symbols-outlined text-sm" data-icon="person">person</span>
+                                    </div>
+                                    <span class="text-white text-sm">Marcus Chen</span>
+                                </div>
+                                <label class="flex items-center cursor-pointer">
+                                    <span class="text-[10px] text-slate-500 mr-2 uppercase font-bold">Member</span>
+                                    <div class="relative w-8 h-4 bg-orange-600 rounded-full transition-colors">
+                                        <div class="absolute right-0.5 top-0.5 bg-white w-3 h-3 rounded-full shadow-sm">
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            <!-- Player 2 -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 border border-dashed border-slate-600">
+                                        <span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                                    </div>
+                                    <span class="text-slate-500 text-sm">Add Partner</span>
+                                </div>
+                                <label class="flex items-center cursor-pointer">
+                                    <span class="text-[10px] text-slate-500 mr-2 uppercase font-bold">Member</span>
+                                    <div class="relative w-8 h-4 bg-slate-700 rounded-full transition-colors">
+                                        <div
+                                            class="absolute left-0.5 top-0.5 bg-slate-400 w-3 h-3 rounded-full shadow-sm">
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Team B -->
+                    <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-slate-600"></div>
+                        <h3 class="text-white font-label-bold mb-4 flex items-center gap-2">
+                            Team B <span
+                                class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full">AWAY</span>
+                        </h3>
+                        <div class="space-y-4">
+                            <!-- Player 1 -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-500">
+                                        <span class="material-symbols-outlined text-sm" data-icon="person">person</span>
+                                    </div>
+                                    <input class="bg-transparent border-none p-0 text-white text-sm focus:ring-0 w-24"
+                                        placeholder="Search Player..." type="text" />
+                                </div>
+                                <label class="flex items-center cursor-pointer">
+                                    <span class="text-[10px] text-slate-500 mr-2 uppercase font-bold">Member</span>
+                                    <div class="relative w-8 h-4 bg-slate-700 rounded-full transition-colors">
+                                        <div
+                                            class="absolute left-0.5 top-0.5 bg-slate-400 w-3 h-3 rounded-full shadow-sm">
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            <!-- Player 2 -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 border border-dashed border-slate-600">
+                                        <span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                                    </div>
+                                    <span class="text-slate-500 text-sm italic">Guest Player</span>
+                                </div>
+                                <label class="flex items-center cursor-pointer">
+                                    <span class="text-[10px] text-slate-500 mr-2 uppercase font-bold">Member</span>
+                                    <div class="relative w-8 h-4 bg-slate-700 rounded-full transition-colors">
+                                        <div
+                                            class="absolute left-0.5 top-0.5 bg-slate-400 w-3 h-3 rounded-full shadow-sm">
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Set Scoring -->
+            <div class="space-y-4 bg-slate-900/50 p-6 rounded-2xl border border-slate-800/50">
+                <div class="flex items-center justify-between">
+                    <label class="text-slate-400 font-label-bold uppercase text-[11px] tracking-widest">Match
+                        Sets</label>
+                    <div class="flex gap-16 pr-4">
+                        <span class="text-[10px] text-slate-500 font-black uppercase">Team A</span>
+                        <span class="text-[10px] text-slate-500 font-black uppercase">Team B</span>
+                    </div>
+                </div>
+                <!-- Set Rows -->
+                <div class="space-y-3" id="setsContainer">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 text-slate-500 font-black text-xs">SET 1</div>
+                        <div class="flex-1 flex gap-4">
+                            <input
+                                class="w-full bg-slate-900 border-slate-700 rounded-lg text-center text-orange-500 font-display-stat text-2xl py-1 focus:border-orange-500 focus:ring-0"
+                                type="number" value="11" />
+                            <input
+                                class="w-full bg-slate-900 border-slate-700 rounded-lg text-center text-white font-display-stat text-2xl py-1 focus:border-orange-500 focus:ring-0"
+                                type="number" value="8" />
+                        </div>
+                        <button class="text-slate-600 hover:text-error transition-colors">
+                            <span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 text-slate-500 font-black text-xs">SET 2</div>
+                        <div class="flex-1 flex gap-4">
+                            <input
+                                class="w-full bg-slate-900 border-slate-700 rounded-lg text-center text-orange-500 font-display-stat text-2xl py-1 focus:border-orange-500 focus:ring-0"
+                                type="number" value="11" />
+                            <input
+                                class="w-full bg-slate-900 border-slate-700 rounded-lg text-center text-white font-display-stat text-2xl py-1 focus:border-orange-500 focus:ring-0"
+                                type="number" value="4" />
+                        </div>
+                        <button class="text-slate-600 hover:text-error transition-colors">
+                            <span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
+                        </button>
+                    </div>
+                </div>
+                <button id="addSetBtn"
+                    class="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-700 rounded-xl text-slate-500 hover:text-white hover:border-slate-500 hover:bg-slate-800 transition-all font-label-bold group">
+                    <span class="material-symbols-outlined text-sm group-hover:rotate-90 transition-transform"
+                        data-icon="add">add</span>
+                    Add Set
                 </button>
             </div>
         </div>
+        <!-- Modal Footer -->
+        <div id="matchError"></div>
+        <div class="px-8 py-6 border-t border-slate-800 bg-slate-900/30 flex items-center justify-end gap-4">
+            <button id="discardMatchBtn"
+                class="px-6 py-3 text-slate-400 font-label-bold hover:text-white transition-colors">Discard</button>
+            <button
+                class="px-8 py-3 bg-orange-600 text-white font-label-bold rounded-xl shadow-lg shadow-orange-900/30 hover:bg-orange-500 active:scale-95 transform transition-all flex items-center gap-2">
+                <span class="material-symbols-outlined" data-icon="check_circle" data-weight="fill">check_circle</span>
+                Save Match Result
+            </button>
+        </div>
+    </div>
     </div>
 </body>
 <script type="module" src="js/index.js"></script>
