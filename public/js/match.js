@@ -208,32 +208,39 @@ async function loadMatches(filter = "all") {
     }
 
     try {
-        // GET /api/matches?user_id=xxx&limit=20
-        const res = await fetch(`${API_BASE}/matches?user_id=${CURRENT_USER_ID}&limit=20`, {
-            headers: { "Content-Type": "application/json" }
-        });
+        // Step 1: Get summary list
+        const res = await fetch(`${API_BASE}/matches?user_id=${CURRENT_USER_ID}&limit=20`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        let matches = await res.json();
+        const summaries = await res.json();
 
-        // For each match summary we need full detail (sets + players)
-        // Fetch full detail in parallel
-        /*ori from claude - remark to use the new func shared by gemini 
-        matches = await Promise.all(
-            matches.map(async (summary) => {
-                const detailRes = await fetch(`${API_BASE}/matches/${summary.match_id}`, {
-                    headers: { "Content-Type": "application/json" }
-                });
-                if (!detailRes.ok) return summary; // fallback to summary if detail fails
+        // Step 2: Deduplicate by match_id (list returns one row per team)
+        const uniqueIds = [...new Set(summaries.map(s => s.match_id))];
+
+        // Step 3: Fetch full detail for each unique match in parallel
+        let matches = await Promise.all(
+            uniqueIds.map(async (id) => {
+                const detailRes = await fetch(`${API_BASE}/matches/${id}`);
+                if (!detailRes.ok) return null;
                 return await detailRes.json();
             })
         );
-        */
 
-        // Apply filter tab
+        // Drop any failed detail fetches
+        matches = matches.filter(Boolean);
+
+        // Step 4: Apply filter — derive win based on which team current user is on
         if (filter === "wins") {
-            matches = matches.filter(m => m.winner === "A"); // adjust if your API returns user's team
+            matches = matches.filter(m => {
+                const userInA = m.teams?.A?.some(p => p.user_id === CURRENT_USER_ID);
+                const myTeam = userInA ? "A" : "B";
+                return m.winner === myTeam;
+            });
         } else if (filter === "losses") {
-            matches = matches.filter(m => m.winner === "B");
+            matches = matches.filter(m => {
+                const userInA = m.teams?.A?.some(p => p.user_id === CURRENT_USER_ID);
+                const myTeam = userInA ? "A" : "B";
+                return m.winner !== myTeam;
+            });
         }
 
         renderMatches(matches);
