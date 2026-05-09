@@ -27,6 +27,24 @@ function playerName(p) {
     return { name: "Unknown", isGuest: false };
 }
 
+function computeAndRenderStats(matches) {
+    const total = matches.length;
+    let wins = 0;
+
+    matches.forEach(m => {
+        const userInA = m.teams?.A?.some(p => p.user_id === CURRENT_USER_ID);
+        const myTeam = userInA ? "A" : "B";
+        if (m.winner === myTeam) wins++;
+    });
+
+    const losses = total - wins;
+    const winPct = total > 0 ? Math.round((wins / total) * 100) : 0;
+
+    document.getElementById("statTotal").textContent = total;
+    document.getElementById("statWins").textContent = wins;
+    document.getElementById("statWinPct").textContent = winPct + "%";
+}
+
 function guestBadge() {
     return `<span class="px-2 py-0.5 bg-slate-100 text-slate-500 font-label-bold text-[10px] rounded uppercase">Guest</span>`;
 }
@@ -228,6 +246,8 @@ async function loadMatches(filter = "all") {
         // Drop any failed detail fetches
         matches = matches.filter(Boolean);
 
+        const allMatches = [...matches]; // keep unfiltered copy
+
         // Step 4: Apply filter — derive win based on which team current user is on
         if (filter === "wins") {
             matches = matches.filter(m => {
@@ -243,6 +263,7 @@ async function loadMatches(filter = "all") {
             });
         }
 
+        computeAndRenderStats(allMatches); // ← add this line
         renderMatches(matches);
     } catch (err) {
         console.error("Failed to load matches:", err);
