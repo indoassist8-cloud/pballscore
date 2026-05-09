@@ -486,7 +486,6 @@ function setFormat(isDoubles) {
 openBtn?.addEventListener("click", openModal);
 closeBtn?.addEventListener("click", closeModal);
 discardBtn?.addEventListener("click", closeModal);
-backdrop?.addEventListener("click", closeModal);
 submitBtn?.addEventListener("click", submitMatch);
 
 // Format
