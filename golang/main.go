@@ -653,25 +653,25 @@ func GetMatchHandler(db *sql.DB) http.HandlerFunc {
 //	})
 
 /*
-backup ori from claude
+backup ori from claude*/
 
-	func ListUserMatchesHandler(db *sql.DB) http.HandlerFunc {
-		return func(w http.ResponseWriter, r *http.Request) {
-			userID := r.URL.Query().Get("user_id")
-			if userID == "" {
-				writeError(w, http.StatusBadRequest, "user_id query param is required")
-				return
+func ListUserMatchesHandler(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID := r.URL.Query().Get("user_id")
+		if userID == "" {
+			writeError(w, http.StatusBadRequest, "user_id query param is required")
+			return
+		}
+
+		limit := 20
+		if l := r.URL.Query().Get("limit"); l != "" {
+			if parsed, err2 := strconv.Atoi(l); err2 == nil && parsed > 0 {
+				limit = parsed
 			}
+		}
 
-			limit := 20
-			if l := r.URL.Query().Get("limit"); l != "" {
-				if parsed, err2 := strconv.Atoi(l); err2 == nil && parsed > 0 {
-					limit = parsed
-				}
-			}
-
-			rows, err := db.Query(
-				`SELECT m.id, st.name, m.location, m.match_date,
+		rows, err := db.Query(
+			`SELECT m.id, st.name, m.location, m.match_date,
 				        mr.team_identifier, mr.score, mr.is_winner
 				   FROM match_results mr
 				   JOIN matches m     ON m.id  = mr.match_id
@@ -679,43 +679,44 @@ backup ori from claude
 				  WHERE mr.user_id = ?
 				  ORDER BY m.match_date DESC
 				  LIMIT ?`,
-				userID, limit,
-			)
-			if err != nil {
-				log.Printf("ListUserMatches query: %v", err)
+			userID, limit,
+		)
+		if err != nil {
+			log.Printf("ListUserMatches query: %v", err)
+			writeError(w, http.StatusInternalServerError, "database error")
+			return
+		}
+		defer rows.Close()
+
+		type MatchSummary struct {
+			MatchID   int       `json:"match_id"`
+			SportType string    `json:"sport_type"`
+			Location  string    `json:"location"`
+			MatchDate time.Time `json:"match_date"`
+			Team      string    `json:"team"`
+			Score     int       `json:"score"`
+			IsWinner  bool      `json:"is_winner"`
+		}
+
+		var matches []MatchSummary
+		for rows.Next() {
+			var ms MatchSummary
+			if err = rows.Scan(&ms.MatchID, &ms.SportType, &ms.Location, &ms.MatchDate, &ms.Team, &ms.Score, &ms.IsWinner); err != nil {
+				log.Printf("scan match summary: %v", err)
 				writeError(w, http.StatusInternalServerError, "database error")
 				return
 			}
-			defer rows.Close()
-
-			type MatchSummary struct {
-				MatchID   int       `json:"match_id"`
-				SportType string    `json:"sport_type"`
-				Location  string    `json:"location"`
-				MatchDate time.Time `json:"match_date"`
-				Team      string    `json:"team"`
-				Score     int       `json:"score"`
-				IsWinner  bool      `json:"is_winner"`
-			}
-
-			var matches []MatchSummary
-			for rows.Next() {
-				var ms MatchSummary
-				if err = rows.Scan(&ms.MatchID, &ms.SportType, &ms.Location, &ms.MatchDate, &ms.Team, &ms.Score, &ms.IsWinner); err != nil {
-					log.Printf("scan match summary: %v", err)
-					writeError(w, http.StatusInternalServerError, "database error")
-					return
-				}
-				matches = append(matches, ms)
-			}
-			if matches == nil {
-				matches = []MatchSummary{} // return [] not null
-			}
-
-			writeJSON(w, http.StatusOK, matches)
+			matches = append(matches, ms)
 		}
+		if matches == nil {
+			matches = []MatchSummary{} // return [] not null
+		}
+
+		writeJSON(w, http.StatusOK, matches)
 	}
-*/
+}
+
+/*
 func ListUserMatchesHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userID := r.URL.Query().Get("user_id")
@@ -789,9 +790,9 @@ func ListUserMatchesHandler(db *sql.DB) http.HandlerFunc {
 
 			// Construct query: SELECT ... WHERE match_id IN (?, ?, ?) ORDER BY set_number
 			query := fmt.Sprintf(
-				`SELECT match_id, set_number, score_team_a, score_team_b 
-                 FROM match_sets 
-                 WHERE match_id IN (%s) 
+				`SELECT match_id, set_number, score_team_a, score_team_b
+                 FROM match_sets
+                 WHERE match_id IN (%s)
                  ORDER BY set_number`,
 				strings.Join(placeholders, ","),
 			)
@@ -827,7 +828,7 @@ func ListUserMatchesHandler(db *sql.DB) http.HandlerFunc {
 		writeJSON(w, http.StatusOK, matches)
 	}
 }
-
+*/
 /////////
 //// 6 May 2026 - add communities helper
 /////////
