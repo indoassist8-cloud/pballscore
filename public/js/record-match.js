@@ -416,6 +416,10 @@ async function submitMatch() {
         showToast(`Match #${data.match_id} saved! 🎉`);
         resetState();
 
+        setTimeout(() => {
+            window.location.reload();
+        }, 800);
+
     } catch (err) {
         showError(err.message);
     } finally {
