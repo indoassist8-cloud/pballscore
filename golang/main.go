@@ -180,7 +180,7 @@ type TeamMember struct {
 
 func main() {
 	// 1. Initialize MySQL connection
-	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true&loc=Asia%%2FJakarta",
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_HOST"),
