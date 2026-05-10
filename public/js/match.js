@@ -64,6 +64,7 @@ function buildMatchCard(match) {
     const isWin = winner === myTeam;
     const sets = match.sets ?? [];
     const emoji = SPORT_EMOJI[match.sport_type] ?? "🏆";
+    const sportType = match.sport_type;
 
     // ── ribbon color
     const ribbonClass = isWin ? "bg-orange-600" : "bg-slate-200";
@@ -151,6 +152,7 @@ function buildMatchCard(match) {
             <!-- Sport Icon & Status -->
             <div class="flex flex-col items-center gap-2">
                 <div class="${iconClass}">${emoji}</div>
+                <span class="px-3 py-1 bg-green-50 text-green-800 font-label-bold text-[10px] uppercase rounded-full tracking-widest">${sportType}</span>
                 ${statusBadge}
             </div>
 
